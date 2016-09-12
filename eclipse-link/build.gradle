@@ -1,0 +1,6 @@
+dependencies {
+    compile project(':core')
+    // https://mvnrepository.com/artifact/org.eclipse.persistence/eclipselink
+    compile group: 'org.eclipse.persistence', name: 'eclipselink', version: '2.6.3'
+    
+}

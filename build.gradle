@@ -1,0 +1,9 @@
+subprojects {
+    apply plugin: 'java'
+    group = 'db.shaker'
+    version = '0.0.1'
+
+    repositories {
+        mavenCentral()
+    }
+}
