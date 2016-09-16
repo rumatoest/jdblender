@@ -7,5 +7,7 @@ public interface Spare {
 
     long getId();
 
+    long brandId();
+
     String getName();
 }

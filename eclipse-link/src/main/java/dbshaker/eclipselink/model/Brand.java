@@ -13,6 +13,14 @@ import javax.persistence.Table;
 @Table(name = "brands")
 public class Brand implements dbshaker.core.domain.Brand {
 
+    public Brand() {
+    }
+
+    public Brand(long id, String name) {
+        this.id = id;
+        this.name = name;
+    }
+
     @Id
     @Column(name = "id")
     private long id;

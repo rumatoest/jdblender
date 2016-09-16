@@ -5,11 +5,11 @@ package dbshaker.core;
  */
 public class DbConnection {
 
-    public String driverClass;
+    public static String driverClass = "org.h2.Driver";
 
-    public String uri;
+    public static  String uri = "jdbc:h2:mem:shaker";
 
-    public String username;
+    public static  String username = "";
 
-    public String password;
+    public static  String password = "";
 }

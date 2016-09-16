@@ -1,5 +1,7 @@
 package dbshaker.core.domain;
 
+import java.util.Collection;
+
 /**
  *
  */
@@ -7,7 +9,9 @@ public interface ModelObj {
 
     long getId();
 
-    Brand getBrand();
+    SeriesObj getModel();
 
     String getName();
+
+    Collection<SpareObj> getSpares();
 }

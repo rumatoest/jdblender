@@ -3,9 +3,9 @@ package dbshaker.core.domain;
 /**
  *
  */
-public interface ModelVariant2Spare {
+public interface Spare2Model {
 
-    long getModelVariantId();
+    long getModelId();
 
     long getSpareId();
 }

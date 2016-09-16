@@ -1,3 +1,6 @@
+apply plugin: 'application'
+mainClassName = "dbshaker.eclipselink.App"
+
 dependencies {
     compile project(':core')
     // https://mvnrepository.com/artifact/org.eclipse.persistence/eclipselink

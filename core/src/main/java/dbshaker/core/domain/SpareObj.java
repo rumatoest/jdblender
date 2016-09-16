@@ -3,11 +3,11 @@ package dbshaker.core.domain;
 /**
  *
  */
-public interface Model {
+public interface SpareObj {
 
     long getId();
 
-    long getSeriesId();
+    Brand getBrand();
 
     String getName();
 }
