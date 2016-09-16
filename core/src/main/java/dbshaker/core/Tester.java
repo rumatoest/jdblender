@@ -26,13 +26,13 @@ public class Tester {
             .forEach(id -> callback.query(id));
 
         final Scores timer = new Scores();
+        int runs = idToInclusive - idHeat;
+        long startNs = timer.startNs();
         IntStream.rangeClosed(idHeat, idToInclusive)
             .parallel()
-            .forEach(id -> {
-                timer.start();
-                callback.query(id);
-                timer.stop();
-            });
+            .forEach(id -> callback.query(id));
+        timer.stop(runs, startNs);
+
         return timer;
     }
 

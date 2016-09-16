@@ -12,6 +12,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
+import java.util.function.Supplier;
 import java.util.logging.Level;
 
 /**
@@ -40,8 +41,10 @@ public class ShakerApp {
             connection.setAutoCommit(false);
             dbInit();
             runner.init(new DbConnection());
+            
             runInsertTests();
             dbAddIndexes();
+            
         } catch (Exception ex) {
             java.util.logging.Logger.getLogger("ShakerApp").log(Level.SEVERE, ex.getMessage(), ex);
         } finally {
@@ -56,13 +59,18 @@ public class ShakerApp {
         Scores res;
 
         BrandsData brands = new BrandsData(runner);
-        res = brands.insertAll();
+        runInsertOn("brands", brands::insertAll);
         brands.clear();
-        res.label("brands");
-        this.scores.add(res);
 
+        System.err.flush();
         System.err.print(scoresHeader());
         System.err.print(scores());
+    }
+    
+    void runInsertOn(String label, Supplier<Scores> callback) {
+        Scores s = callback.get();
+        s.label(label);
+        this.scores.add(s);
     }
 
     String scoresHeader() {
@@ -71,9 +79,9 @@ public class ShakerApp {
             if (sb.length() > 0) {
                 sb.append(',');
             }
-            sb.append(s.label()).append("[n],");
-            sb.append(s.label()).append("[time],");
-            sb.append(s.label()).append("[avg]");
+            sb.append(s.label()).append("[num runs],");
+            sb.append(s.label()).append("[time sec],");
+            sb.append(s.label()).append("[avg mu]");
         }
         return sb.append("\n").toString();
     }
@@ -86,8 +94,9 @@ public class ShakerApp {
             }
             
             sb.append(s.iterations()).append(',');
-            sb.append(s.timeMs()).append(',');
-            sb.append(BigDecimal.valueOf(s.avg()).setScale(6, RoundingMode.HALF_UP));
+            sb.append(s.timeSec()).append(',');
+//            sb.append(BigDecimal.valueOf(s.timeSec()).setScale(2, RoundingMode.HALF_UP)).append(',');
+            sb.append(BigDecimal.valueOf(s.avgMu()).setScale(6, RoundingMode.HALF_UP));
         }
         return sb.append("\n").toString();
     }

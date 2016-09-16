@@ -1,23 +1,19 @@
 package dbshaker.core;
 
-import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.DoubleAdder;
+import java.util.concurrent.atomic.LongAdder;
 
 /**
  *
  */
 public class Scores {
 
-    AtomicInteger iteration = new AtomicInteger();
+    LongAdder iteration = new LongAdder();
 
-    long startTime = 0;
-
-    long stopTime = 0;
+    DoubleAdder runTimeNs = new DoubleAdder();
 
     String label = "n/a";
-
-    public Scores() {
-        this.label = label;
-    }
 
     public void label(String label) {
         this.label = label;
@@ -27,33 +23,27 @@ public class Scores {
         return label;
     }
 
-    public void start() {
-        if (startTime == 0) {
-            startTime = System.currentTimeMillis();
-        }
+    public long startNs() {
+        return System.nanoTime();
     }
 
-    public void stop() {
-        iteration.incrementAndGet();
-        this.stopTime = System.currentTimeMillis();
-    }
-
-    public void stop(int iterationsPassed) {
-        iteration.addAndGet(iterationsPassed);
-        this.stopTime = System.currentTimeMillis();
+    public void stop(int runsCount, long startNs) {
+        iteration.add(runsCount);
+        runTimeNs.add(System.nanoTime() - startNs);
     }
 
     public int iterations() {
-        return iteration.get();
+        return iteration.intValue();
     }
 
-    public double avg() {
-        long delta = stopTime - startTime;
-        return ((double)delta / iteration.get());
+    /**
+     * Time in microseconds.
+     */
+    public double avgMu() {
+        return (double)TimeUnit.NANOSECONDS.toMicros(runTimeNs.longValue()) / iteration.intValue();
     }
 
-    public int timeMs() {
-        long delta = stopTime - startTime;
-        return (int)delta / 1000;
+    public double timeSec() {
+        return (double)TimeUnit.NANOSECONDS.toMillis(runTimeNs.longValue()) / 1000;
     }
 }
