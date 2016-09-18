@@ -8,5 +8,6 @@
       <property name="orm.validate.schema" value="true"/>
     </properties>
     <class>dbshaker.eclipselink.model.Brand</class>
+    <class>dbshaker.eclipselink.model.Series</class>
   </persistence-unit>
 </persistence>

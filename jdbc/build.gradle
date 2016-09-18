@@ -1,0 +1,6 @@
+apply plugin: 'application'
+mainClassName = "dbshaker.jdbc.App"
+
+dependencies {
+    compile project(':core')
+}

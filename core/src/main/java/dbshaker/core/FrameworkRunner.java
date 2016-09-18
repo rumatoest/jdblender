@@ -12,23 +12,25 @@ public interface FrameworkRunner {
     /**
      * Will call it once before tests begin.
      */
-    void init(DbConnection connection);
+    void init(DbConnection connection) throws Exception;
 
     /**
      * All test completed.
      * Runner must be close all resources here.
      */
-    void close();
+    void close() throws Exception;
 
-    void createBrand(long id, String name);
+    void createSeries(long id, long brandId, String name) throws Exception;
 
-    void createModel(long id, long brandId, String name);
+    void createBrand(long id, String name) throws Exception;
 
-    void createModelVariant(long id, long modelId, String name);
+    void createModel(long id, long brandId, String name) throws Exception;
 
-    void createSpare(long id, String name);
+    void createModelVariant(long id, long modelId, String name) throws Exception;
 
-    void linkSpare2ModelVariant(long spareId, long modelVariantId);
+    void createSpare(long id, String name) throws Exception;
 
-    Brand getBrand(long id);
+    void linkSpare2ModelVariant(long spareId, long modelVariantId) throws Exception;
+
+    Brand getBrand(long id) throws Exception;
 }

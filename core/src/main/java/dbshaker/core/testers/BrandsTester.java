@@ -1,6 +1,5 @@
-package dbshaker.core.data;
+package dbshaker.core.testers;
 
-import dbshaker.core.Tester;
 import dbshaker.core.FrameworkRunner;
 import dbshaker.core.Scores;
 
@@ -13,11 +12,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 
-/**
- *
- * @author rumatoest
- */
-public class BrandsData {
+public class BrandsTester {
 
     public static String NAMES_FILE = "/dbshaker/brands.txt";
 
@@ -29,7 +24,7 @@ public class BrandsData {
 
     private final FrameworkRunner runner;
 
-    public BrandsData(FrameworkRunner runner) throws IOException {
+    public BrandsTester(FrameworkRunner runner) throws IOException {
         names = new ArrayList<>();
         try (final InputStream is = getClass().getResourceAsStream(NAMES_FILE);
             BufferedReader br = new BufferedReader(new InputStreamReader(is))) {
@@ -46,11 +41,11 @@ public class BrandsData {
         this.names.clear();
     }
 
-    public void insertValue(int id) {
-        runner.createBrand(id, names.get(RandomUtils.nextInt(0, names.size())).concat(RandomStringUtils.randomAscii(2)));
+    public Scores insertData() {
+        return Tester.test(ID_MIN, ID_MAX, id -> insertOne(id));
     }
 
-    public Scores insertAll() {
-        return Tester.test(ID_MIN, ID_MAX, id -> insertValue(id));
+    void insertOne(int id) throws Exception {
+        runner.createBrand(id, names.get(RandomUtils.nextInt(0, names.size())).concat(RandomStringUtils.randomAscii(2)));
     }
 }

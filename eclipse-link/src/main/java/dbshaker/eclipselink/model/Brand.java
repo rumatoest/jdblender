@@ -5,10 +5,6 @@ import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Table;
 
-/**
- *
- * @author rumatoest
- */
 @Entity
 @Table(name = "brands")
 public class Brand implements dbshaker.core.domain.Brand {

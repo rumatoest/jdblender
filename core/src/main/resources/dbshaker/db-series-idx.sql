@@ -1,0 +1,2 @@
+ALTER TABLE series ADD PRIMARY KEY (id);
+ALTER TABLE series ADD FOREIGN KEY (brand_id) REFERENCES brands(id);

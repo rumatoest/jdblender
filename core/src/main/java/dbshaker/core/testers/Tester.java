@@ -1,5 +1,9 @@
-package dbshaker.core;
+package dbshaker.core.testers;
 
+import dbshaker.core.CallbackQuery;
+import dbshaker.core.Scores;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import java.util.stream.IntStream;
 
 /**
@@ -14,7 +18,7 @@ public class Tester {
      * @param idToInclusive Test case ID should stop on (must be greater than idFrom)
      * @param callback Callback that will be executed with each test ID in provided range.
      */
-    public static Scores test(int idFrom, int idToInclusive, QueryCallback callback) {
+    public static Scores test(int idFrom, int idToInclusive, CallbackQuery callback){
         int heatDelta = (idToInclusive - idFrom) / 10;
         if (heatDelta > 1000000) {
             heatDelta = 1000000;
@@ -23,17 +27,25 @@ public class Tester {
 
         IntStream.range(idFrom, idHeat)
             .parallel()
-            .forEach(id -> callback.query(id));
+            .forEach(id -> Tester.queryWithCatch(id, callback));
 
         final Scores timer = new Scores();
         int runs = idToInclusive - idHeat;
         long startNs = timer.startNs();
         IntStream.rangeClosed(idHeat, idToInclusive)
             .parallel()
-            .forEach(id -> callback.query(id));
+            .forEach(id -> Tester.queryWithCatch(id, callback));
         timer.stop(runs, startNs);
 
         return timer;
+    }
+
+    static void queryWithCatch(int id, CallbackQuery callback) {
+        try {
+            callback.query(id);
+        } catch (Exception ex) {
+            Logger.getLogger("ShakerApp").log(Level.SEVERE, ex.getMessage(), ex);
+        }
     }
 
 }
