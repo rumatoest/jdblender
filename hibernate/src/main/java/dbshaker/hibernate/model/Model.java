@@ -1,4 +1,4 @@
-package dbshaker.eclipselink.model;
+package dbshaker.hibernate.model;
 
 import dbshaker.core.domain.SeriesObj;
 import dbshaker.core.domain.SpareObj;

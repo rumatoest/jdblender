@@ -1,5 +1,6 @@
 include 'core'
-include 'eclipse-link'
 include 'jdbc'
+include 'eclipse-link'
+include 'hibernate'
 
 rootProject.name = 'db-shaker'

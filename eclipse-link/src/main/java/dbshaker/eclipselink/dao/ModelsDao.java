@@ -19,4 +19,14 @@ public class ModelsDao {
         em.persist(model);
         em.getTransaction().commit();
     }
+
+    public Model getByPk(long id) {
+        return emf.createEntityManager().find(Model.class, id);
+    }
+
+    public Model getByPkObj(long id) {
+        Model entity = emf.createEntityManager().find(Model.class, id);
+        entity.getSeries().getBrand();
+        return entity;
+    }
 }

@@ -1,9 +1,28 @@
 apply plugin: 'application'
-mainClassName = "dbshaker.eclipselink.App"
+mainClassName = "dbshaker.eclipselink.AppEclipse"
 
 dependencies {
     compile project(':core')
     // https://mvnrepository.com/artifact/org.eclipse.persistence/eclipselink
     compile group: 'org.eclipse.persistence', name: 'eclipselink', version: '2.6.3'
     
+}
+
+// Weaving will enable LazyLoading
+// Without it will be eager by default
+task performJPAWeaving(type: JavaExec, dependsOn: "compileJava"){
+    inputs.dir compileJava.destinationDir
+    outputs.dir compileJava.destinationDir
+    main "org.eclipse.persistence.tools.weaving.jpa.StaticWeave"
+    args  "-persistenceinfo",
+   "src/main/resources",
+    compileJava.destinationDir.getAbsolutePath(),
+    compileJava.destinationDir.getAbsolutePath()
+    classpath = configurations.compile
+}
+
+tasks.withType(JavaCompile){
+    doLast{
+        tasks.performJPAWeaving.execute()
+    }
 }

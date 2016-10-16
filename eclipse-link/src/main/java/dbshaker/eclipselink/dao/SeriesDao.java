@@ -18,4 +18,14 @@ public class SeriesDao {
         em.persist(series);
         em.getTransaction().commit();
     }
+
+    public Series getByPk(long id) {
+        return emf.createEntityManager().find(Series.class, id);
+    }
+
+    public Series getByPkObj(long id) {
+        Series entity = emf.createEntityManager().find(Series.class, id);
+        entity.getBrand();
+        return entity;
+    }
 }

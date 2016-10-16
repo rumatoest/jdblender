@@ -18,34 +18,43 @@ public class Tester {
      * @param idToInclusive Test case ID should stop on (must be greater than idFrom)
      * @param callback Callback that will be executed with each test ID in provided range.
      */
-    public static Scores test(int idFrom, int idToInclusive, CallbackQuery callback){
+    public static Scores test(int idFrom, int idToInclusive, CallbackQuery callback) {
         int heatDelta = (idToInclusive - idFrom) / 10;
         if (heatDelta > 1000000) {
             heatDelta = 1000000;
         }
         int idHeat = idFrom + heatDelta;
 
-        IntStream.range(idFrom, idHeat)
-            .parallel()
-            .forEach(id -> Tester.queryWithCatch(id, callback));
-
         final Scores timer = new Scores();
+
+        IntStream.range(idFrom, idHeat)
+            //.parallel()
+            .forEach(id -> Tester.queryWithCatch(id, callback, timer));
+
         int runs = idToInclusive - idHeat;
         long startNs = timer.startNs();
         IntStream.rangeClosed(idHeat, idToInclusive)
-            .parallel()
-            .forEach(id -> Tester.queryWithCatch(id, callback));
+            //.parallel()
+            .forEach(id -> Tester.queryWithCatch(id, callback, timer));
         timer.stop(runs, startNs);
 
         return timer;
     }
 
-    static void queryWithCatch(int id, CallbackQuery callback) {
+    static void queryWithCatch(int id, CallbackQuery callback, Scores timer) {
         try {
-            callback.query(id);
+            timer.updateCode(callback.query(id));
         } catch (Exception ex) {
             Logger.getLogger("ShakerApp").log(Level.SEVERE, ex.getMessage(), ex);
+            System.exit(1);
         }
     }
 
+    static long codeIt(long... codes) {
+        long sum = 0;
+        for (long c : codes) {
+            sum += c;
+        }
+        return sum / codes.length;
+    }
 }

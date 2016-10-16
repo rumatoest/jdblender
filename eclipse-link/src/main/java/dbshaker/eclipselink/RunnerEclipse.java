@@ -6,6 +6,7 @@ import dbshaker.eclipselink.dao.BrandsDao;
 import dbshaker.eclipselink.dao.ModelsDao;
 import dbshaker.eclipselink.dao.SeriesDao;
 import dbshaker.eclipselink.model.Brand;
+import dbshaker.eclipselink.model.Model;
 import dbshaker.eclipselink.model.Series;
 
 import java.util.HashMap;
@@ -16,7 +17,7 @@ import javax.persistence.Persistence;
 /**
  *
  */
-public class Runner implements FrameworkRunner {
+public class RunnerEclipse implements FrameworkRunner {
 
     private EntityManagerFactory emf;
 
@@ -52,26 +53,40 @@ public class Runner implements FrameworkRunner {
         brandsDao.persist(new Brand(id, name));
     }
 
+    public Brand getBrand(long id) {
+        return brandsDao.getByPk(id);
+    }
+
     @Override
     public void createSeries(long id, long brandId, String name) throws Exception {
         Brand brand = brandsDao.getByPk(brandId);
         seriesDao.persist(new Series(id, brand, name));
     }
 
-    public Brand getBrand(long id) {
-        return brandsDao.getByPk(id);
+    @Override
+    public Series getSeries(long id) throws Exception {
+        return seriesDao.getByPk(id);
     }
 
     @Override
-    public void createModel(long id, long brandId, String name) {
-        Brand Brand = brandsDao.getByPk(brandId);
-
-        throw new UnsupportedOperationException("Not supported yet.");
+    public Series getSeriesObj(long id) throws Exception {
+        return seriesDao.getByPkObj(id);
     }
 
     @Override
-    public void createModelVariant(long id, long modelId, String name) {
-        throw new UnsupportedOperationException("Not supported yet.");
+    public void createModel(long id, long seriesId, String name) {
+        Series series = seriesDao.getByPk(seriesId);
+        modelsDao.persist(new Model(id, series, name));
+    }
+
+    @Override
+    public Model getModel(long id) {
+        return modelsDao.getByPk(id);
+    }
+
+    @Override
+    public Model getModelObj(long id) {
+        return modelsDao.getByPkObj(id);
     }
 
     @Override
@@ -83,5 +98,4 @@ public class Runner implements FrameworkRunner {
     public void linkSpare2ModelVariant(long spareId, long modelVariantId) {
         throw new UnsupportedOperationException("Not supported yet.");
     }
-
 }

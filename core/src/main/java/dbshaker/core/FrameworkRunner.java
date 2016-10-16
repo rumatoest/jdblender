@@ -1,6 +1,10 @@
 package dbshaker.core;
 
 import dbshaker.core.domain.Brand;
+import dbshaker.core.domain.Model;
+import dbshaker.core.domain.ModelObj;
+import dbshaker.core.domain.Series;
+import dbshaker.core.domain.SeriesObj;
 
 /**
  * Will run code exactly on particular DB framework.
@@ -20,17 +24,24 @@ public interface FrameworkRunner {
      */
     void close() throws Exception;
 
-    void createSeries(long id, long brandId, String name) throws Exception;
-
     void createBrand(long id, String name) throws Exception;
 
-    void createModel(long id, long brandId, String name) throws Exception;
+    Brand getBrand(long id) throws Exception;
 
-    void createModelVariant(long id, long modelId, String name) throws Exception;
+    void createSeries(long id, long brandId, String name) throws Exception;
+
+    Series getSeries(long id) throws Exception;
+
+    SeriesObj getSeriesObj(long id) throws Exception;
+
+    void createModel(long id, long seriesId, String name) throws Exception;
+
+    Model getModel(long id) throws Exception;
+
+    ModelObj getModelObj(long id) throws Exception;
 
     void createSpare(long id, String name) throws Exception;
 
     void linkSpare2ModelVariant(long spareId, long modelVariantId) throws Exception;
 
-    Brand getBrand(long id) throws Exception;
 }

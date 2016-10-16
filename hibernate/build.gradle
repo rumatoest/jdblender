@@ -1,0 +1,22 @@
+apply plugin: 'application'
+apply plugin: 'org.hibernate.orm'
+mainClassName = "dbshaker.hibernate.AppHibernate"
+
+dependencies {
+    compile project(':core')
+    // https://mvnrepository.com/artifact/org.hibernate/hibernate-core
+    compile group: 'org.hibernate', name: 'hibernate-core', version: '5.2.3.Final'
+}
+
+buildscript {
+    repositories {
+        mavenCentral()
+    }
+    dependencies {
+        classpath "org.hibernate:hibernate-gradle-plugin:5.0.7.Final"
+    }
+}
+
+hibernate {
+    enhance {}
+}

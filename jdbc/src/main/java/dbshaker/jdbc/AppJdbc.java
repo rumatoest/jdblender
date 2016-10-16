@@ -2,10 +2,10 @@ package dbshaker.jdbc;
 
 import dbshaker.core.ShakerApp;
 
-public class App {
+public class AppJdbc {
 
     public static void main(String[] args) throws Exception {
         ShakerApp app = new ShakerApp();
-        app.main(new Runner(), args);
+        app.main(new RunnerJdbc(), args);
     }
 }

@@ -9,6 +9,8 @@ import java.util.concurrent.atomic.LongAdder;
  */
 public class Scores {
 
+    long hash;
+
     LongAdder iteration = new LongAdder();
 
     DoubleAdder runTimeNs = new DoubleAdder();
@@ -45,5 +47,13 @@ public class Scores {
 
     public double timeSec() {
         return (double)TimeUnit.NANOSECONDS.toMillis(runTimeNs.longValue()) / 1000;
+    }
+
+    public void updateCode(long hash) {
+        this.hash = this.hash / 2 + hash / 2;
+    }
+
+    long getCode() {
+        return this.hash;
     }
 }

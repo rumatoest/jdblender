@@ -2,5 +2,5 @@ package dbshaker.core;
 
 public interface CallbackQuery {
 
-    void query(int id) throws Exception;
+    long query(int id) throws Exception;
 }

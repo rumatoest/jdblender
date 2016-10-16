@@ -9,7 +9,7 @@ public interface ModelObj {
 
     long getId();
 
-    SeriesObj getModel();
+    SeriesObj getSeries();
 
     String getName();
 

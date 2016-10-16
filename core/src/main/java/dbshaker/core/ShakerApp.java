@@ -1,6 +1,7 @@
 package dbshaker.core;
 
 import dbshaker.core.testers.BrandsTester;
+import dbshaker.core.testers.ModelsTester;
 import dbshaker.core.testers.SeriesTester;
 
 import java.io.IOException;
@@ -29,11 +30,19 @@ public class ShakerApp {
 
     private static final String SQL_SERIES_IDX = "/dbshaker/db-series-idx.sql";
 
+    private static final String SQL_MODELS_IDX = "/dbshaker/db-models-idx.sql";
+
     Connection connection;
 
     FrameworkRunner runner;
 
     ArrayList<Scores> scores = new ArrayList<Scores>();
+
+    BrandsTester tstBrands;
+
+    SeriesTester tstSeries;
+
+    ModelsTester tstModels;
 
     /**
      * All you have to do it instantiate this class and call this method.
@@ -49,6 +58,7 @@ public class ShakerApp {
             runner.init(new DbConnection());
 
             runInsertTests();
+            runSelectTests();
 
         } catch (Exception ex) {
             LOG.log(Level.SEVERE, ex.getMessage(), ex);
@@ -58,38 +68,50 @@ public class ShakerApp {
                 runner.close();
             }
         }
-    }
 
-    void runInsertTests() throws Exception {
-        Scores res;
-
-        BrandsTester brands = new BrandsTester(runner);
-        LOG.log(Level.INFO, "Insert brands");
-        runInsertOn("brands IN", brands::insertData);
-        brands.clear();
-
-        dbAddBrandsIndexes();
-
-        SeriesTester series = new SeriesTester(runner);
-        LOG.log(Level.INFO, "Insert series");
-        runInsertOn("series IN", series::insertData);
-        
-        dbAddSeriesIndexes();
-
+        System.out.flush();
         System.err.flush();
         System.err.print(scoresHeader());
         System.err.print(scores());
+        System.exit(0);
     }
 
-    void runInsertOn(String label, CallbackWithScores callback) throws Exception {
+    void runInsertTests() throws Exception {
+        tstBrands = new BrandsTester(runner);
+        runTestsOn("brands IN", tstBrands::insertData);
+
+        dbAddBrandsIndexes();
+
+        tstSeries = new SeriesTester(runner);
+        runTestsOn("series IN", tstSeries::insertData);
+
+        dbAddSeriesIndexes();
+
+        tstModels = new ModelsTester(runner);
+        runTestsOn("models IN", tstModels::insertData);
+
+        dbAddModelsIndexes();
+    }
+
+    void runSelectTests() throws Exception {
+        runTestsOn("brands SEL", tstBrands::selectSome);
+        runTestsOn("series SEL", tstSeries::selectSome);
+        runTestsOn("series SELO", tstSeries::selectSomeObj);
+        runTestsOn("models SEL", tstModels::selectSome);
+        runTestsOn("models SELO", tstModels::selectSomeObj);
+    }
+
+    void runTestsOn(String label, CallbackWithScores callback) throws Exception {
         Scores s = callback.run();
         s.label(label);
         this.scores.add(s);
     }
 
     String scoresHeader() {
+        long code = 0L;
         StringBuilder sb = new StringBuilder();
         for (Scores s : this.scores) {
+            code = code / 2 + s.getCode() / 2;
             if (sb.length() > 0) {
                 sb.append(',');
             }
@@ -97,6 +119,8 @@ public class ShakerApp {
 //            sb.append(s.label()).append("[time sec],");
             sb.append(s.label()).append("[avg mu]");
         }
+
+        System.out.println("code: " + code);
         return sb.append("\n").toString();
     }
 
@@ -151,6 +175,14 @@ public class ShakerApp {
         try (Statement st = connection.createStatement()) {
             LOG.log(Level.INFO, "Adding PK for series");
             st.execute(ShakerApp.getResourceAsString(SQL_SERIES_IDX));
+            connection.commit();
+        }
+    }
+
+    void dbAddModelsIndexes() throws Exception {
+        try (Statement st = connection.createStatement()) {
+            LOG.log(Level.INFO, "Adding PK for models");
+            st.execute(ShakerApp.getResourceAsString(SQL_MODELS_IDX));
             connection.commit();
         }
     }

@@ -1,4 +1,4 @@
-package dbshaker.eclipselink.model;
+package dbshaker.hibernate.model;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;

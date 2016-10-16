@@ -1,11 +1,11 @@
-package dbshaker.eclipselink;
+package dbshaker.hibernate;
 
 import dbshaker.core.ShakerApp;
 
-public class App {
+public class AppHibernate {
 
     public static void main(String[] args) throws Exception {
         ShakerApp app = new ShakerApp();
-        app.main(new Runner(), args);
+        app.main(new RunnerHibernate(), args);
     }
 }
