@@ -20,8 +20,8 @@ public class Tester {
      */
     public static Scores test(int idFrom, int idToInclusive, CallbackQuery callback) {
         int heatDelta = (idToInclusive - idFrom) / 10;
-        if (heatDelta > 1000000) {
-            heatDelta = 1000000;
+        if (heatDelta > 250_000) {
+            heatDelta = 250_000;
         }
         int idHeat = idFrom + heatDelta;
 

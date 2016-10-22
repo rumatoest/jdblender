@@ -3,6 +3,7 @@ package dbshaker.core;
 import dbshaker.core.testers.BrandsTester;
 import dbshaker.core.testers.ModelsTester;
 import dbshaker.core.testers.SeriesTester;
+import dbshaker.core.testers.SparesTester;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -32,6 +33,8 @@ public class ShakerApp {
 
     private static final String SQL_MODELS_IDX = "/dbshaker/db-models-idx.sql";
 
+    private static final String SQL_SPARES_IDX = "/dbshaker/db-spares-idx.sql";
+
     Connection connection;
 
     FrameworkRunner runner;
@@ -43,6 +46,8 @@ public class ShakerApp {
     SeriesTester tstSeries;
 
     ModelsTester tstModels;
+
+    SparesTester tstSpares;
 
     /**
      * All you have to do it instantiate this class and call this method.
@@ -91,6 +96,11 @@ public class ShakerApp {
         runTestsOn("models IN", tstModels::insertData);
 
         dbAddModelsIndexes();
+
+        tstSpares = new SparesTester(runner);
+        runTestsOn("spares IN", tstSpares::insertData);
+
+        dbAddSparesIndexes();
     }
 
     void runSelectTests() throws Exception {
@@ -99,6 +109,8 @@ public class ShakerApp {
         runTestsOn("series SELO", tstSeries::selectSomeObj);
         runTestsOn("models SEL", tstModels::selectSome);
         runTestsOn("models SELO", tstModels::selectSomeObj);
+        runTestsOn("spares SEL", tstSpares::selectSome);
+        runTestsOn("spares SELO", tstSpares::selectSomeObj);
     }
 
     void runTestsOn(String label, CallbackWithScores callback) throws Exception {
@@ -183,6 +195,14 @@ public class ShakerApp {
         try (Statement st = connection.createStatement()) {
             LOG.log(Level.INFO, "Adding PK for models");
             st.execute(ShakerApp.getResourceAsString(SQL_MODELS_IDX));
+            connection.commit();
+        }
+    }
+
+    void dbAddSparesIndexes() throws Exception {
+        try (Statement st = connection.createStatement()) {
+            LOG.log(Level.INFO, "Adding PK for spares");
+            st.execute(ShakerApp.getResourceAsString(SQL_SPARES_IDX));
             connection.commit();
         }
     }

@@ -5,13 +5,8 @@ import dbshaker.core.Scores;
 import dbshaker.core.domain.Brand;
 
 import org.apache.commons.lang3.RandomStringUtils;
-import org.apache.commons.lang3.RandomUtils;
 
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.util.ArrayList;
 import java.util.logging.Logger;
 
 public class BrandsTester {
@@ -20,7 +15,7 @@ public class BrandsTester {
 
     public static int ID_MIN = 1;
 
-    public static int ID_MAX = 10000;
+    public static int ID_MAX = 10_000;
 
     private final FrameworkRunner runner;
 
@@ -46,5 +41,12 @@ public class BrandsTester {
     long selectOne(int id) throws Exception {
         Brand brand = runner.getBrand(id);
         return brand.getId() / 2 + brand.getName().hashCode() / 2;
+    }
+
+    public static long hashBrand(Brand brand) {
+        return Tester.codeIt(
+            brand.getId(),
+            brand.getName().hashCode()
+        );
     }
 }

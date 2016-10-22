@@ -5,16 +5,14 @@ import dbshaker.core.FrameworkRunner;
 import dbshaker.hibernate.dao.BrandsDao;
 import dbshaker.hibernate.dao.ModelsDao;
 import dbshaker.hibernate.dao.SeriesDao;
+import dbshaker.hibernate.dao.SparesDao;
 import dbshaker.hibernate.model.Brand;
 import dbshaker.hibernate.model.Model;
 import dbshaker.hibernate.model.Series;
+import dbshaker.hibernate.model.Spare;
 
 import org.hibernate.SessionFactory;
-import org.hibernate.boot.Metadata;
-import org.hibernate.boot.MetadataSources;
-import org.hibernate.boot.registry.StandardServiceRegistryBuilder;
 import org.hibernate.cfg.Configuration;
-import org.hibernate.service.ServiceRegistry;
 
 /**
  *
@@ -28,6 +26,8 @@ public class RunnerHibernate implements FrameworkRunner {
     private SeriesDao seriesDao;
 
     private ModelsDao modelsDao;
+
+    private SparesDao sparesDao;
 
     @Override
     public void init(DbConnection connection) {
@@ -43,6 +43,7 @@ public class RunnerHibernate implements FrameworkRunner {
         brandsDao = new BrandsDao(sf);
         seriesDao = new SeriesDao(sf);
         modelsDao = new ModelsDao(sf);
+        sparesDao = new SparesDao(sf);
     }
 
     @Override
@@ -94,8 +95,27 @@ public class RunnerHibernate implements FrameworkRunner {
     }
 
     @Override
-    public void createSpare(long id, String name) {
-        throw new UnsupportedOperationException("Not supported yet.");
+    public void createSpare(long id, long brandId, String name, String label, boolean flag, int num) throws Exception {
+        Spare spare = new Spare();
+        spare.setId(id);
+        spare.setName(name);
+        spare.setLabel(label);
+        spare.setFlag(flag);
+        spare.setNum(num);
+        spare.setBrand(brandsDao.getByPk(brandId));
+
+        sparesDao.persist(spare);
+
+    }
+
+    @Override
+    public Spare getSpare(long id) throws Exception {
+        return sparesDao.getByPk(id);
+    }
+
+    @Override
+    public Spare getSpareObj(long id) throws Exception {
+        return sparesDao.getByPkObj(id);
     }
 
     @Override

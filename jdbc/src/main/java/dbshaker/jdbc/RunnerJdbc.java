@@ -5,6 +5,7 @@ import dbshaker.core.FrameworkRunner;
 import dbshaker.jdbc.dao.Brand;
 import dbshaker.jdbc.dao.Model;
 import dbshaker.jdbc.dao.Series;
+import dbshaker.jdbc.dao.Spare;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -151,21 +152,20 @@ public class RunnerJdbc implements FrameworkRunner {
     public Model getModelObj(long id) throws Exception {
         try (PreparedStatement ps = connect.prepareStatement(
             "SELECT m.id, m.name, s.id s_id, s.name s_name, b.id b_id, b.name b_name FROM models m "
-                + "INNER JOIN series s ON s.id = m.series_id "
-                + "INNER JOIN brands b ON b.id = s.brand_id "
-                + "WHERE m.id = ?"
+            + "INNER JOIN series s ON s.id = m.series_id "
+            + "INNER JOIN brands b ON b.id = s.brand_id "
+            + "WHERE m.id = ?"
         )) {
             ps.setLong(1, id);
             ResultSet rs = ps.executeQuery();
             if (!rs.next()) {
                 return null;
             }
-            
-            
+
             Brand bojb = new Brand();
             bojb.setId(rs.getLong(5));
             bojb.setName(rs.getString(6));
-            
+
             Series sobj = new Series();
             sobj.setBrand(bojb);
             sobj.setId(rs.getLong(3));
@@ -181,8 +181,72 @@ public class RunnerJdbc implements FrameworkRunner {
     }
 
     @Override
-    public void createSpare(long id, String name) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    public void createSpare(long id, long brandId, String name, String label, boolean flag, int num) throws Exception {
+        try (PreparedStatement ps = connect.prepareStatement(
+            "INSERT INTO spares (id, brand_id, name, label, flag, num) VALUES (?,?,?,?,?,?)")) {
+
+            ps.setLong(1, id);
+            ps.setLong(2, brandId);
+            ps.setString(3, name);
+            ps.setString(4, label);
+            ps.setBoolean(5, flag);
+            ps.setInt(6, num);
+            ps.executeUpdate();
+            connect.commit();
+        }
+    }
+
+    @Override
+    public Spare getSpare(long id) throws Exception {
+        try (PreparedStatement ps = connect.prepareStatement(
+            "SELECT s.id, s.name, s.label, s.flag, s.num, s.brand_id FROM spares s WHERE s.id = ?"
+        )) {
+            ps.setLong(1, id);
+            ResultSet rs = ps.executeQuery();
+            if (!rs.next()) {
+                return null;
+            }
+
+            Spare spare = new Spare();
+            spare.setId(rs.getLong(1));
+            spare.setName(rs.getString(2));
+            spare.setLabel(rs.getString(3));
+            spare.setFlag(rs.getBoolean(4));
+            spare.setNum(rs.getInt(5));
+            spare.setBrandId(rs.getLong(6));
+
+            rs.close();
+            return spare;
+        }
+    }
+
+    @Override
+    public Spare getSpareObj(long id) throws Exception {
+        try (PreparedStatement ps = connect.prepareStatement(
+            "SELECT s.id, s.name, s.label, s.flag, s.num, s.brand_id, b.name brand_name FROM spares s "
+            + "INNER JOIN brands b ON b.id = s.brand_id WHERE s.id = ?"
+        )) {
+            ps.setLong(1, id);
+            ResultSet rs = ps.executeQuery();
+            if (!rs.next()) {
+                return null;
+            }
+
+            Brand jobj = new Brand();
+            jobj.setId(rs.getLong(6));
+            jobj.setName(rs.getString(7));
+
+            Spare spare = new Spare();
+            spare.setId(rs.getLong(1));
+            spare.setName(rs.getString(2));
+            spare.setLabel(rs.getString(3));
+            spare.setFlag(rs.getBoolean(4));
+            spare.setNum(rs.getInt(5));
+            spare.setBrand(jobj);
+
+            rs.close();
+            return spare;
+        }
     }
 
     @Override

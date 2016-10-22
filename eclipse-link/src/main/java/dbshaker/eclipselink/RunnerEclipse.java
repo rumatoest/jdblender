@@ -5,9 +5,11 @@ import dbshaker.core.FrameworkRunner;
 import dbshaker.eclipselink.dao.BrandsDao;
 import dbshaker.eclipselink.dao.ModelsDao;
 import dbshaker.eclipselink.dao.SeriesDao;
+import dbshaker.eclipselink.dao.SparesDao;
 import dbshaker.eclipselink.model.Brand;
 import dbshaker.eclipselink.model.Model;
 import dbshaker.eclipselink.model.Series;
+import dbshaker.eclipselink.model.Spare;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -27,6 +29,8 @@ public class RunnerEclipse implements FrameworkRunner {
 
     private ModelsDao modelsDao;
 
+    private SparesDao sparesDao;
+
     @Override
     public void init(DbConnection connection) {
         Map<String, String> properties = new HashMap<String, String>();
@@ -41,6 +45,7 @@ public class RunnerEclipse implements FrameworkRunner {
         brandsDao = new BrandsDao(emf);
         seriesDao = new SeriesDao(emf);
         modelsDao = new ModelsDao(emf);
+        sparesDao = new SparesDao(emf);
     }
 
     @Override
@@ -90,8 +95,26 @@ public class RunnerEclipse implements FrameworkRunner {
     }
 
     @Override
-    public void createSpare(long id, String name) {
-        throw new UnsupportedOperationException("Not supported yet.");
+    public void createSpare(long id, long brandId, String name, String label, boolean flag, int num) throws Exception {
+        Spare spare = new Spare();
+        spare.setId(id);
+        spare.setName(name);
+        spare.setLabel(label);
+        spare.setFlag(flag);
+        spare.setNum(num);
+        spare.setBrand(brandsDao.getByPk(brandId));
+
+        sparesDao.persist(spare);
+    }
+
+    @Override
+    public Spare getSpare(long id) throws Exception {
+        return sparesDao.getByPk(id);
+    }
+
+    @Override
+    public Spare getSpareObj(long id) throws Exception {
+        return sparesDao.getByPkObj(id);
     }
 
     @Override

@@ -18,5 +18,6 @@
     <class>dbshaker.eclipselink.model.Brand</class>
     <class>dbshaker.eclipselink.model.Series</class>
     <class>dbshaker.eclipselink.model.Model</class>
+    <class>dbshaker.eclipselink.model.Spare</class>
   </persistence-unit>
 </persistence>

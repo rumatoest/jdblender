@@ -5,6 +5,8 @@ import dbshaker.core.domain.Model;
 import dbshaker.core.domain.ModelObj;
 import dbshaker.core.domain.Series;
 import dbshaker.core.domain.SeriesObj;
+import dbshaker.core.domain.Spare;
+import dbshaker.core.domain.SpareObj;
 
 /**
  * Will run code exactly on particular DB framework.
@@ -40,8 +42,11 @@ public interface FrameworkRunner {
 
     ModelObj getModelObj(long id) throws Exception;
 
-    void createSpare(long id, String name) throws Exception;
+    void createSpare(long id, long brandId, String name, String label, boolean flag, int num) throws Exception;
+
+    Spare getSpare(long id) throws Exception;
+
+    SpareObj getSpareObj(long id) throws Exception;
 
     void linkSpare2ModelVariant(long spareId, long modelVariantId) throws Exception;
-
 }

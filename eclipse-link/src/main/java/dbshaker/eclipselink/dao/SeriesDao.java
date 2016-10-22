@@ -25,7 +25,7 @@ public class SeriesDao {
 
     public Series getByPkObj(long id) {
         Series entity = emf.createEntityManager().find(Series.class, id);
-        entity.getBrand();
+        entity.getBrand().getName();
         return entity;
     }
 }

@@ -10,4 +10,10 @@ public interface SpareObj {
     Brand getBrand();
 
     String getName();
+
+    String getLabel();
+
+    boolean getFlag();
+
+    int getNum();
 }

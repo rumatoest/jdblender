@@ -15,7 +15,7 @@ public class SeriesTester {
 
     public static int ID_MIN = 1;
 
-    public static int ID_MAX = 100000;
+    public static int ID_MAX = 50_000;
 
     private final FrameworkRunner runner;
 
@@ -29,7 +29,7 @@ public class SeriesTester {
     }
 
     long insertOne(int id) throws Exception {
-        int brandId = RandomUtils.nextInt(BrandsTester.ID_MIN, BrandsTester.ID_MAX + 1);
+        int brandId = id % BrandsTester.ID_MAX + 1;
         runner.createSeries(id, brandId, RandomStringUtils.randomAlphanumeric(16));
         return 1;
     }
@@ -41,7 +41,7 @@ public class SeriesTester {
 
     long selectOne(int id) throws Exception {
         Series s = runner.getSeries(id);
-        return Tester.codeIt(s.getId(), s.getName().hashCode());
+        return hashSeries(s);
     }
 
     public Scores selectSomeObj() {
@@ -51,8 +51,18 @@ public class SeriesTester {
 
     long selectOneObj(int id) throws Exception {
         SeriesObj s = runner.getSeriesObj(id);
+        return hashSeriesObj(s);
+    }
 
-        return Tester.codeIt(s.getId(), s.getName().hashCode(),
-            s.getBrand().getId(), s.getBrand().getName().hashCode());
+    public static long hashSeries(Series series) {
+        return Tester.codeIt(series.getId(), series.getName().hashCode());
+    }
+
+    public static long hashSeriesObj(SeriesObj series) {
+        return Tester.codeIt(
+            series.getId(),
+            series.getName().hashCode(),
+            BrandsTester.hashBrand(series.getBrand())
+        );
     }
 }

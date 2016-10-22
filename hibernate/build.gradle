@@ -13,10 +13,14 @@ buildscript {
         mavenCentral()
     }
     dependencies {
-        classpath "org.hibernate:hibernate-gradle-plugin:5.0.7.Final"
+        classpath "org.hibernate:hibernate-gradle-plugin:5.2.3.Final"
     }
 }
 
 hibernate {
-    enhance {}
+    enhance {
+        enableLazyInitialization= true
+        enableDirtyTracking = true
+        enableAssociationManagement = true
+    }
 }

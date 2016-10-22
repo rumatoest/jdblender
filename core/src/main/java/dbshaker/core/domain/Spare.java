@@ -7,7 +7,13 @@ public interface Spare {
 
     long getId();
 
-    long brandId();
+    long getBrandId();
 
     String getName();
+
+    String getLabel();
+
+    boolean getFlag();
+
+    int getNum();
 }
