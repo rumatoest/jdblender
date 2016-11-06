@@ -1,7 +1,6 @@
 package dbshaker.jdbc.dao;
 
-import dbshaker.core.domain.SpareObj;
-import java.util.Collection;
+import java.util.Set;
 
 public class Model implements dbshaker.core.domain.Model, dbshaker.core.domain.ModelObj {
 
@@ -12,6 +11,8 @@ public class Model implements dbshaker.core.domain.Model, dbshaker.core.domain.M
     private String name;
 
     private Series series;
+
+    private Set<Spare> spares;
 
     @Override
     public long getId() {
@@ -50,8 +51,11 @@ public class Model implements dbshaker.core.domain.Model, dbshaker.core.domain.M
     }
 
     @Override
-    public Collection<SpareObj> getSpares() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    public Set<Spare> getSpares() {
+        return spares;
     }
 
+    public void setSpares(Set<Spare> spares) {
+        this.spares = spares;
+    }
 }

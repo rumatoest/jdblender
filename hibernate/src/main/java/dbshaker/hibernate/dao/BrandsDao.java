@@ -14,12 +14,8 @@ public class BrandsDao {
     }
 
     public Brand getByPk(long id) {
-        Session s = sf.getCurrentSession();
-        Transaction tx = s.beginTransaction();
-        try {
+        try (Session s = sf.openSession()) {
             return s.get(Brand.class, id);
-        } finally {
-            tx.commit();
         }
     }
 

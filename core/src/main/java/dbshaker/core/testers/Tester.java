@@ -23,6 +23,9 @@ public class Tester {
         if (heatDelta > 250_000) {
             heatDelta = 250_000;
         }
+        if (heatDelta < 2000) {
+            heatDelta = 2000;
+        }
         int idHeat = idFrom + heatDelta;
 
         final Scores timer = new Scores();

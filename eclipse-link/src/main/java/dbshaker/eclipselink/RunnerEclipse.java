@@ -2,6 +2,7 @@ package dbshaker.eclipselink;
 
 import dbshaker.core.DbConnection;
 import dbshaker.core.FrameworkRunner;
+import dbshaker.core.domain.ModelObj;
 import dbshaker.eclipselink.dao.BrandsDao;
 import dbshaker.eclipselink.dao.ModelsDao;
 import dbshaker.eclipselink.dao.SeriesDao;
@@ -10,6 +11,7 @@ import dbshaker.eclipselink.model.Brand;
 import dbshaker.eclipselink.model.Model;
 import dbshaker.eclipselink.model.Series;
 import dbshaker.eclipselink.model.Spare;
+import java.util.Collection;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -118,7 +120,22 @@ public class RunnerEclipse implements FrameworkRunner {
     }
 
     @Override
-    public void linkSpare2ModelVariant(long spareId, long modelVariantId) {
-        throw new UnsupportedOperationException("Not supported yet.");
+    public void linkModel2Spare(long modelId, long spareId) {
+        modelsDao.link2Spare(modelId, spareId);
+    }
+
+    @Override
+    public void linkModel2SpareOptimized(long modelId, long spareId) throws Exception {
+        modelsDao.link2SpareFast(modelId, spareId);
+    }
+
+    @Override
+    public ModelObj getModelObjWithSpares(long id) throws Exception {
+        return modelsDao.getByPkObjSpares(id);
+    }
+
+    @Override
+    public Collection<Spare> getSpares(String label, Boolean flag, Integer numFromInclusive, Integer numToInclusive) throws Exception {
+        return sparesDao.findSpares(label, flag, numFromInclusive, numToInclusive);
     }
 }

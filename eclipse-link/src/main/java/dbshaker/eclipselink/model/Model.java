@@ -1,14 +1,17 @@
 package dbshaker.eclipselink.model;
 
-import dbshaker.core.domain.SeriesObj;
 import dbshaker.core.domain.SpareObj;
-
 import java.util.Collection;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.Set;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
@@ -68,9 +71,22 @@ public class Model implements dbshaker.core.domain.Model, dbshaker.core.domain.M
         this.name = name;
     }
 
-    @Override
-    public Collection<SpareObj> getSpares() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    @ManyToMany(fetch = FetchType.LAZY)
+    @JoinTable(name = "spare_to_model",
+        joinColumns = @JoinColumn(name = "model_id", referencedColumnName = "id"),
+        inverseJoinColumns = @JoinColumn(name = "spare_id", referencedColumnName = "id")
+    )
+    private Set<Spare> spares;
+
+    public void setSpares(Set<Spare> spares) {
+        this.spares = spares;
     }
 
+    @Override
+    public Set<Spare> getSpares() {
+        if (spares == null) {
+            return new HashSet<>();
+        }
+        return spares;
+    }
 }

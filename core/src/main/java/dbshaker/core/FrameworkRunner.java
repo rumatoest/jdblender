@@ -8,6 +8,8 @@ import dbshaker.core.domain.SeriesObj;
 import dbshaker.core.domain.Spare;
 import dbshaker.core.domain.SpareObj;
 
+import java.util.Collection;
+
 /**
  * Will run code exactly on particular DB framework.
  *
@@ -42,11 +44,29 @@ public interface FrameworkRunner {
 
     ModelObj getModelObj(long id) throws Exception;
 
+    /**
+     * Model object with all spares.
+     */
+    ModelObj getModelObjWithSpares(long id) throws Exception;
+
     void createSpare(long id, long brandId, String name, String label, boolean flag, int num) throws Exception;
 
     Spare getSpare(long id) throws Exception;
 
+    /**
+     * Any param can be null in this case we do not need any SQL condition.
+     *
+     * @param numFromInclusive Use exact match if next param is null
+     * @param numToInclusive Skip if previous param null
+     */
+    Collection<? extends Spare> getSpares(String label, Boolean flag, Integer numFromInclusive, Integer numToInclusive) throws Exception;
+
     SpareObj getSpareObj(long id) throws Exception;
 
-    void linkSpare2ModelVariant(long spareId, long modelVariantId) throws Exception;
+    void linkModel2Spare(long modelId, long spareId) throws Exception;
+
+    /**
+     * For slow framework, otherwise just use same logic as in linkModel2Spare
+     */
+    void linkModel2SpareOptimized(long modelId, long spareId) throws Exception;
 }

@@ -2,6 +2,7 @@ package dbshaker.jdbc;
 
 import dbshaker.core.DbConnection;
 import dbshaker.core.FrameworkRunner;
+import dbshaker.core.domain.ModelObj;
 import dbshaker.jdbc.dao.Brand;
 import dbshaker.jdbc.dao.Model;
 import dbshaker.jdbc.dao.Series;
@@ -11,6 +12,10 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashSet;
 
 /**
  *
@@ -207,17 +212,21 @@ public class RunnerJdbc implements FrameworkRunner {
                 return null;
             }
 
-            Spare spare = new Spare();
-            spare.setId(rs.getLong(1));
-            spare.setName(rs.getString(2));
-            spare.setLabel(rs.getString(3));
-            spare.setFlag(rs.getBoolean(4));
-            spare.setNum(rs.getInt(5));
-            spare.setBrandId(rs.getLong(6));
-
+            Spare spare = resultToSpare(rs);
             rs.close();
             return spare;
         }
+    }
+
+    Spare resultToSpare(ResultSet rs) throws SQLException {
+        Spare spare = new Spare();
+        spare.setId(rs.getLong(1));
+        spare.setName(rs.getString(2));
+        spare.setLabel(rs.getString(3));
+        spare.setFlag(rs.getBoolean(4));
+        spare.setNum(rs.getInt(5));
+        spare.setBrandId(rs.getLong(6));
+        return spare;
     }
 
     @Override
@@ -232,26 +241,116 @@ public class RunnerJdbc implements FrameworkRunner {
                 return null;
             }
 
-            Brand jobj = new Brand();
-            jobj.setId(rs.getLong(6));
-            jobj.setName(rs.getString(7));
-
-            Spare spare = new Spare();
-            spare.setId(rs.getLong(1));
-            spare.setName(rs.getString(2));
-            spare.setLabel(rs.getString(3));
-            spare.setFlag(rs.getBoolean(4));
-            spare.setNum(rs.getInt(5));
-            spare.setBrand(jobj);
+            Spare spare = resultToSpareObj(rs);
 
             rs.close();
             return spare;
         }
     }
 
+    Spare resultToSpareObj(ResultSet rs) throws SQLException {
+        Brand jobj = new Brand();
+        jobj.setId(rs.getLong(6));
+        jobj.setName(rs.getString(7));
+
+        Spare spare = new Spare();
+        spare.setId(rs.getLong(1));
+        spare.setName(rs.getString(2));
+        spare.setLabel(rs.getString(3));
+        spare.setFlag(rs.getBoolean(4));
+        spare.setNum(rs.getInt(5));
+        spare.setBrand(jobj);
+        return spare;
+    }
+
     @Override
-    public void linkSpare2ModelVariant(long spareId, long modelVariantId) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    public void linkModel2Spare(long modelId, long spareId) throws Exception {
+        try (PreparedStatement ps = connect.prepareStatement(
+            "INSERT INTO spare_to_model (spare_id, model_id) VALUES (?,?)")) {
+
+            ps.setLong(1, spareId);
+            ps.setLong(2, modelId);
+            ps.executeUpdate();
+            connect.commit();
+        }
+    }
+
+    @Override
+    public void linkModel2SpareOptimized(long modelId, long spareId) throws Exception {
+        linkModel2Spare(modelId, spareId);
+    }
+
+    @Override
+    public ModelObj getModelObjWithSpares(long id) throws Exception {
+        Model model = getModelObj(id);
+
+        try (PreparedStatement ps = connect.prepareStatement(
+            "SELECT s.id, s.name, s.label, s.flag, s.num, s.brand_id, b.name brand_name FROM spares s "
+            + "INNER JOIN brands b ON b.id = s.brand_id "
+            + "INNER JOIN spare_to_model m2m ON m2m.spare_id = s.id "
+            + "WHERE m2m.model_id = ?"
+        )) {
+            ps.setLong(1, id);
+            ResultSet rs = ps.executeQuery();
+
+            HashSet<Spare> spares = new HashSet<>();
+            while (rs.next()) {
+                spares.add(resultToSpareObj(rs));
+            }
+            rs.close();
+            model.setSpares(spares);
+        }
+        return model;
+    }
+
+    @Override
+    public Collection<Spare> getSpares(String label, Boolean flag,
+        Integer numFromInclusive, Integer numToInclusive) throws Exception {
+
+        ArrayList params = new ArrayList();
+        StringBuilder sb = new StringBuilder("SELECT s.id, s.name, s.label, s.flag, s.num, s.brand_id "
+            + "FROM spares s WHERE ");
+
+        if (label != null) {
+            sb.append(" s.label = ? ");
+            params.add(label);
+        }
+
+        if (flag != null) {
+            if (!params.isEmpty()) {
+                sb.append(" AND ");
+            }
+            sb.append(" s.flag = ? ");
+            params.add(flag);
+        }
+
+        if (numFromInclusive != null) {
+            if (!params.isEmpty()) {
+                sb.append(" AND ");
+            }
+
+            if (numToInclusive == null) {
+                sb.append("s.num = ?");
+                params.add(numFromInclusive);
+            } else {
+                sb.append("s.num >= ? AND s.num <= ?");
+                params.add(numFromInclusive);
+                params.add(numToInclusive);
+            }
+        }
+
+        try (PreparedStatement ps = connect.prepareStatement(sb.toString())) {
+            for (int i = 0; i < params.size(); i++) {
+                ps.setObject(i + 1, params.get(i));
+            }
+
+            ResultSet rs = ps.executeQuery();
+            ArrayList<Spare> spares = new ArrayList<>();
+            while (rs.next()) {
+                spares.add(resultToSpare(rs));
+            }
+            return spares;
+        }
     }
 
 }

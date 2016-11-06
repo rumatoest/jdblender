@@ -2,6 +2,7 @@ package dbshaker.hibernate;
 
 import dbshaker.core.DbConnection;
 import dbshaker.core.FrameworkRunner;
+import dbshaker.core.domain.ModelObj;
 import dbshaker.hibernate.dao.BrandsDao;
 import dbshaker.hibernate.dao.ModelsDao;
 import dbshaker.hibernate.dao.SeriesDao;
@@ -10,6 +11,7 @@ import dbshaker.hibernate.model.Brand;
 import dbshaker.hibernate.model.Model;
 import dbshaker.hibernate.model.Series;
 import dbshaker.hibernate.model.Spare;
+import java.util.Collection;
 
 import org.hibernate.SessionFactory;
 import org.hibernate.cfg.Configuration;
@@ -119,7 +121,22 @@ public class RunnerHibernate implements FrameworkRunner {
     }
 
     @Override
-    public void linkSpare2ModelVariant(long spareId, long modelVariantId) {
-        throw new UnsupportedOperationException("Not supported yet.");
+    public void linkModel2Spare(long spareId, long modelVariantId) {
+        modelsDao.link2Spare(spareId, spareId);
+    }
+
+    @Override
+    public void linkModel2SpareOptimized(long modelId, long spareId) throws Exception {
+        modelsDao.link2SpareFast(modelId, spareId);
+    }
+
+    @Override
+    public ModelObj getModelObjWithSpares(long id) throws Exception {
+        return modelsDao.getByPkObjSpares(id);
+    }
+
+    @Override
+    public Collection<Spare> getSpares(String label, Boolean flag, Integer numFromInclusive, Integer numToInclusive) throws Exception {
+        return sparesDao.findSpares(label, flag, numFromInclusive, numToInclusive);
     }
 }

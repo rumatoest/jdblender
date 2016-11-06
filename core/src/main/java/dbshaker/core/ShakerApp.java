@@ -35,6 +35,8 @@ public class ShakerApp {
 
     private static final String SQL_SPARES_IDX = "/dbshaker/db-spares-idx.sql";
 
+    private static final String SQL_M2M_IDX = "/dbshaker/db-m2m-idx.sql";
+
     Connection connection;
 
     FrameworkRunner runner;
@@ -85,32 +87,43 @@ public class ShakerApp {
         tstBrands = new BrandsTester(runner);
         runTestsOn("brands IN", tstBrands::insertData);
 
-        dbAddBrandsIndexes();
+        LOG.log(Level.INFO, "Adding PK for brands");
+        executeSql(SQL_BRANDS_IDX);
 
         tstSeries = new SeriesTester(runner);
         runTestsOn("series IN", tstSeries::insertData);
 
-        dbAddSeriesIndexes();
+        LOG.log(Level.INFO, "Adding PK for series");
+        executeSql(SQL_SERIES_IDX);
 
         tstModels = new ModelsTester(runner);
         runTestsOn("models IN", tstModels::insertData);
 
-        dbAddModelsIndexes();
+        LOG.log(Level.INFO, "Adding PK for models");
+        executeSql(SQL_MODELS_IDX);
 
         tstSpares = new SparesTester(runner);
         runTestsOn("spares IN", tstSpares::insertData);
 
-        dbAddSparesIndexes();
+        LOG.log(Level.INFO, "Adding PK for spares");
+        executeSql(SQL_SPARES_IDX);
+
+        runTestsOn("m2m IN", tstSpares::insertLinks);
+        runTestsOn("m2m O IN", tstSpares::insertLinksFast);
+        LOG.log(Level.INFO, "Adding PK for m2m links");
+        executeSql(SQL_M2M_IDX);
     }
 
     void runSelectTests() throws Exception {
-        runTestsOn("brands SEL", tstBrands::selectSome);
-        runTestsOn("series SEL", tstSeries::selectSome);
-        runTestsOn("series SELO", tstSeries::selectSomeObj);
-        runTestsOn("models SEL", tstModels::selectSome);
-        runTestsOn("models SELO", tstModels::selectSomeObj);
-        runTestsOn("spares SEL", tstSpares::selectSome);
-        runTestsOn("spares SELO", tstSpares::selectSomeObj);
+//        runTestsOn("brands SEL", tstBrands::selectSome);
+//        runTestsOn("series SEL", tstSeries::selectSome);
+//        runTestsOn("series SELO", tstSeries::selectSomeObj);
+//        runTestsOn("models SEL", tstModels::selectSome);
+//        runTestsOn("models SELO", tstModels::selectSomeObj);
+//        runTestsOn("spares SEL", tstSpares::selectSome);
+//        runTestsOn("spares SELO", tstSpares::selectSomeObj);
+        runTestsOn("models/spares", tstSpares::selectSomeObjWithLinks);
+        runTestsOn("spares DYN", tstSpares::selectSpares);
     }
 
     void runTestsOn(String label, CallbackWithScores callback) throws Exception {
@@ -175,34 +188,9 @@ public class ShakerApp {
         runner.init(new DbConnection());
     }
 
-    void dbAddBrandsIndexes() throws Exception {
+    void executeSql(String fileResource) throws Exception {
         try (Statement st = connection.createStatement()) {
-            LOG.log(Level.INFO, "Adding PK for brands");
-            st.execute(ShakerApp.getResourceAsString(SQL_BRANDS_IDX));
-            connection.commit();
-        }
-    }
-
-    void dbAddSeriesIndexes() throws Exception {
-        try (Statement st = connection.createStatement()) {
-            LOG.log(Level.INFO, "Adding PK for series");
-            st.execute(ShakerApp.getResourceAsString(SQL_SERIES_IDX));
-            connection.commit();
-        }
-    }
-
-    void dbAddModelsIndexes() throws Exception {
-        try (Statement st = connection.createStatement()) {
-            LOG.log(Level.INFO, "Adding PK for models");
-            st.execute(ShakerApp.getResourceAsString(SQL_MODELS_IDX));
-            connection.commit();
-        }
-    }
-
-    void dbAddSparesIndexes() throws Exception {
-        try (Statement st = connection.createStatement()) {
-            LOG.log(Level.INFO, "Adding PK for spares");
-            st.execute(ShakerApp.getResourceAsString(SQL_SPARES_IDX));
+            st.execute(ShakerApp.getResourceAsString(fileResource));
             connection.commit();
         }
     }

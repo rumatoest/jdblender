@@ -1,6 +1,8 @@
 apply plugin: 'application'
 mainClassName = "dbshaker.jdbc.AppJdbc"
 
+applicationDefaultJvmArgs = ["-XX:CompileThreshold=100"]
+
 dependencies {
     compile project(':core')
 }

@@ -1,9 +1,12 @@
 package dbshaker.hibernate.dao;
 
 import dbshaker.hibernate.model.Spare;
+import java.util.List;
+import org.hibernate.Criteria;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
+import org.hibernate.criterion.Restrictions;
 
 public class SparesDao {
 
@@ -21,26 +24,39 @@ public class SparesDao {
     }
 
     public Spare getByPk(long id) {
-        Session s = sf.getCurrentSession();
-        Transaction tx = s.beginTransaction();
-        try {
-            Spare ret = s.get(Spare.class, id);
-            ret.getBrand().getId();
-            return ret;
-        } finally {
-            tx.commit();
+        try (Session s = sf.openSession()) {
+            return s.get(Spare.class, id);
         }
     }
 
     public Spare getByPkObj(long id) {
-        Session s = sf.getCurrentSession();
-        Transaction tx = s.beginTransaction();
-        try {
+        try (Session s = sf.openSession()) {
             Spare ret = s.get(Spare.class, id);
             ret.getBrand().getId();
             return ret;
-        } finally {
-            tx.commit();
+        }
+    }
+
+    public List<Spare> findSpares(String label, Boolean flag, Integer numFromInclusive, Integer numToInclusive) {
+        try (Session s = sf.openSession()) {
+            Criteria cq = s.createCriteria(Spare.class);
+
+            if (label != null) {
+                cq.add(Restrictions.eq("label", label));
+            }
+
+            if (flag != null) {
+                cq.add(Restrictions.eq("flag", flag));
+            }
+
+            if (numFromInclusive != null) {
+                if (numToInclusive == null) {
+                    cq.add(Restrictions.eq("num", numFromInclusive));
+                } else {
+                    cq.add(Restrictions.conjunction(Restrictions.ge("num", numFromInclusive), Restrictions.ge("num", numToInclusive)));
+                }
+            }
+            return cq.list();
         }
     }
 }

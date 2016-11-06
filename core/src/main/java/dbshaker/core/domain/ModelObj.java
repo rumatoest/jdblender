@@ -1,6 +1,7 @@
 package dbshaker.core.domain;
 
 import java.util.Collection;
+import java.util.Set;
 
 /**
  *
@@ -13,5 +14,5 @@ public interface ModelObj {
 
     String getName();
 
-    Collection<SpareObj> getSpares();
+    Set<? extends SpareObj> getSpares();
 }

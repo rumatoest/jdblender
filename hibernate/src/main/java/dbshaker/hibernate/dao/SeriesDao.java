@@ -21,24 +21,16 @@ public class SeriesDao {
     }
 
     public Series getByPk(long id) {
-        Session s = sf.getCurrentSession();
-        Transaction tx = s.beginTransaction();
-        try {
+        try (Session s = sf.openSession()) {
             return s.get(Series.class, id);
-        } finally {
-            tx.commit();
         }
     }
 
     public Series getByPkObj(long id) {
-        Session s = sf.getCurrentSession();
-        Transaction tx = s.beginTransaction();
-        try {
+        try (Session s = sf.openSession()) {
             Series ret = s.get(Series.class, id);
             ret.getBrand().getId();
             return ret;
-        } finally {
-            tx.commit();
         }
     }
 }

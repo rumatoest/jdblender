@@ -1,6 +1,8 @@
 apply plugin: 'application'
 mainClassName = "dbshaker.eclipselink.AppEclipse"
 
+applicationDefaultJvmArgs = ["-XX:CompileThreshold=100"]
+
 dependencies {
     compile project(':core')
     // https://mvnrepository.com/artifact/org.eclipse.persistence/eclipselink
