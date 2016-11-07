@@ -8,8 +8,8 @@ import dbshaker.core.testers.SparesTester;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.StringWriter;
-import java.math.BigDecimal;
-import java.math.RoundingMode;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
@@ -58,6 +58,8 @@ public class ShakerApp {
      * @param args Command line arguments
      */
     public void main(FrameworkRunner runner, String[] args) throws Exception {
+        Path reportFile = Paths.get(args[0]);
+
         this.runner = runner;
         try {
             connection = connect();
@@ -78,8 +80,8 @@ public class ShakerApp {
 
         System.out.flush();
         System.err.flush();
-        System.err.print(scoresHeader());
-        System.err.print(scores());
+
+        ReportWriter.write(reportFile, scores);
         System.exit(0);
     }
 
@@ -115,13 +117,13 @@ public class ShakerApp {
     }
 
     void runSelectTests() throws Exception {
-//        runTestsOn("brands SEL", tstBrands::selectSome);
-//        runTestsOn("series SEL", tstSeries::selectSome);
-//        runTestsOn("series SELO", tstSeries::selectSomeObj);
-//        runTestsOn("models SEL", tstModels::selectSome);
-//        runTestsOn("models SELO", tstModels::selectSomeObj);
-//        runTestsOn("spares SEL", tstSpares::selectSome);
-//        runTestsOn("spares SELO", tstSpares::selectSomeObj);
+        runTestsOn("brands SEL", tstBrands::selectSome);
+        runTestsOn("series SEL", tstSeries::selectSome);
+        runTestsOn("series SELO", tstSeries::selectSomeObj);
+        runTestsOn("models SEL", tstModels::selectSome);
+        runTestsOn("models SELO", tstModels::selectSomeObj);
+        runTestsOn("spares SEL", tstSpares::selectSome);
+        runTestsOn("spares SELO", tstSpares::selectSomeObj);
         runTestsOn("models/spares", tstSpares::selectSomeObjWithLinks);
         runTestsOn("spares DYN", tstSpares::selectSpares);
     }
@@ -130,38 +132,6 @@ public class ShakerApp {
         Scores s = callback.run();
         s.label(label);
         this.scores.add(s);
-    }
-
-    String scoresHeader() {
-        long code = 0L;
-        StringBuilder sb = new StringBuilder();
-        for (Scores s : this.scores) {
-            code = code / 2 + s.getCode() / 2;
-            if (sb.length() > 0) {
-                sb.append(',');
-            }
-//            sb.append(s.label()).append("[num runs],");
-//            sb.append(s.label()).append("[time sec],");
-            sb.append(s.label()).append("[avg mu]");
-        }
-
-        System.out.println("code: " + code);
-        return sb.append("\n").toString();
-    }
-
-    String scores() {
-        StringBuilder sb = new StringBuilder();
-        for (Scores s : this.scores) {
-            if (sb.length() > 0) {
-                sb.append(',');
-            }
-
-//            sb.append(s.iterations()).append(',');
-//            sb.append(s.timeSec()).append(',');
-//            sb.append(BigDecimal.valueOf(s.timeSec()).setScale(2, RoundingMode.HALF_UP)).append(',');
-            sb.append(BigDecimal.valueOf(s.avgMu()).setScale(6, RoundingMode.HALF_UP));
-        }
-        return sb.append("\n").toString();
     }
 
     Connection connect() throws Exception {

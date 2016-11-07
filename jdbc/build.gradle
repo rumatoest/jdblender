@@ -6,3 +6,7 @@ applicationDefaultJvmArgs = ["-XX:CompileThreshold=100"]
 dependencies {
     compile project(':core')
 }
+
+run {
+    args = ["${projectDir}/report-${project.name}.csv",]
+}

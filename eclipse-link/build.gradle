@@ -28,3 +28,7 @@ tasks.withType(JavaCompile){
         tasks.performJPAWeaving.execute()
     }
 }
+
+run {
+    args = ["${projectDir}/report-${project.name}.csv",]
+}

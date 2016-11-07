@@ -29,4 +29,5 @@ hibernate {
 
 run {
     systemProperties = ['java.util.logging.config.file' : "${projectDir}/logging.properties"]
+    args = ["${projectDir}/report-${project.name}.csv",]
 }
