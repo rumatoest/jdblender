@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="jdblender.mybatis.mappers.ModelsMapper">
+    <resultMap id="modelObj" autoMapping="true" type="jdblender.mybatis.dao.Model" >
+        <id property="id" column="id" />
+        <association property="series" javaType="jdblender.mybatis.dao.Series"  autoMapping="true">
+            <id property="id" column="series_id" />
+            <result property="name" column="series_name" />           
+            <result property="brandId" column="series_brand_id" />           
+            <association property="brand" javaType="jdblender.mybatis.dao.Brand" columnPrefix="brand_" autoMapping="true"/>
+        </association>
+    </resultMap>
+    
+    <!-- Not optimized resultMap - should be slow -->
+    <!--
+    <resultMap id="spareObj"  type="jdblender.mybatis.dao.Spare" autoMapping="true" >
+        <association property="brand" javaType="jdblender.mybatis.dao.Brand" columnPrefix="brand_" autoMapping="true" />
+    </resultMap>
+    -->
+
+
+    <!-- Little bit optimized resultMap-->
+    <resultMap id="spareObj"  type="jdblender.mybatis.dao.Spare" >
+        <id property="id" column="id" />
+        <result property="name" column="name" />           
+        <result property="brandId" column="brand_id" />           
+        <result property="label" column="label" />           
+        <result property="flag" column="flag" />           
+        <result property="num" column="flag" />           
+        <association property="brand" javaType="jdblender.mybatis.dao.Brand" columnPrefix="brand_">
+            <id property="id" column="id" />
+            <result property="name" column="name" />
+        </association>
+    </resultMap>
+    
+    <resultMap id="modelLinked" autoMapping="true" extends="modelObj"  type="jdblender.mybatis.dao.Model" >
+        <collection property="spares" column="id" select="findSparesForModel" fetchType="eager">
+        </collection>
+    </resultMap>
+    
+    <select id="getWithSpares" resultMap="modelLinked">
+        SELECT m.id, m.name, m.series_id, 
+        s.id series_id, s.name series_name, s.brand_id series_brand_id, 
+        b.id brand_id, b.name brand_name 
+        FROM models m 
+        INNER JOIN series s ON s.id = m.series_id 
+        INNER JOIN brands b ON b.id = s.brand_id 
+        WHERE m.id = #{id}
+    </select>
+    
+    <select id="findSparesForModel" resultMap="spareObj">
+        SELECT s.id, s.name, s.label, s.flag, s.num, s.brand_id, 
+        b.id brand_id, b.name brand_name 
+        FROM spares s 
+        INNER JOIN brands b ON b.id = s.brand_id 
+        INNER JOIN spare_to_model m2m ON m2m.spare_id = s.id 
+        WHERE m2m.model_id = #{id}
+    </select>
+        
+</mapper>
+

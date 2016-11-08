@@ -142,6 +142,10 @@ public class SparesTester {
     }
 
     public long selectModelObjWithLinks(int idx) throws Exception {
+        if (idx % 20_000 == 0) {
+            LOG.info("Model with spares query " + idx);
+        }
+
         ModelObj mod = runner.getModelObjWithSpares(idx);
         long spareFist = linkSpareFirstId(idx);
         long spareLast = spareFist + RATIO;

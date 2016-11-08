@@ -21,9 +21,9 @@ import java.util.logging.Logger;
 /**
  * Main test application runner.
  */
-public class ShakerApp {
+public class BlenderApp {
 
-    private static final Logger LOG = Logger.getLogger(ShakerApp.class.getCanonicalName());
+    private static final Logger LOG = Logger.getLogger(BlenderApp.class.getCanonicalName());
 
     private static final String SQL_SCHEMA = "/dbshaker/db-schema.sql";
 
@@ -58,7 +58,12 @@ public class ShakerApp {
      * @param args Command line arguments
      */
     public void main(FrameworkRunner runner, String[] args) throws Exception {
-        Path reportFile = Paths.get(args[0]);
+        Path reportFile = null;
+        if (args.length < 1) {
+            System.err.append("CSV output not defined!!");
+        } else {
+            reportFile = Paths.get(args[0]);
+        }
 
         this.runner = runner;
         try {
@@ -81,7 +86,11 @@ public class ShakerApp {
         System.out.flush();
         System.err.flush();
 
-        ReportWriter.write(reportFile, scores);
+        if (reportFile != null) {
+            ReportWriter.write(reportFile, scores);
+        } else {
+            System.err.append("CSV output not defined!!");
+        }
         System.exit(0);
     }
 
@@ -144,7 +153,7 @@ public class ShakerApp {
     void dbInit() throws Exception {
         try (Statement st = connection.createStatement()) {
             LOG.log(Level.INFO, "Initializing schema");
-            st.execute(ShakerApp.getResourceAsString(SQL_SCHEMA));
+            st.execute(BlenderApp.getResourceAsString(SQL_SCHEMA));
             connection.commit();
         }
         try (Statement st = connection.createStatement()) {
@@ -160,14 +169,14 @@ public class ShakerApp {
 
     void executeSql(String fileResource) throws Exception {
         try (Statement st = connection.createStatement()) {
-            st.execute(ShakerApp.getResourceAsString(fileResource));
+            st.execute(BlenderApp.getResourceAsString(fileResource));
             connection.commit();
         }
     }
 
     public static String getResourceAsString(String resource) throws IOException {
         String query;
-        try (final InputStream is = ShakerApp.class.getResourceAsStream(resource)) {
+        try (final InputStream is = BlenderApp.class.getResourceAsStream(resource)) {
 
             StringWriter stringWriter = new StringWriter();
             int b;

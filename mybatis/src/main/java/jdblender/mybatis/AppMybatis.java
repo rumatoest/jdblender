@@ -1,11 +1,10 @@
-package jdblender.hibernate;
+package jdblender.mybatis;
 
 import jdblender.core.BlenderApp;
 
-public class AppHibernate {
-
+public class AppMybatis {
     public static void main(String[] args) throws Exception {
         BlenderApp app = new BlenderApp();
-        app.main(new RunnerHibernate(), args);
+        app.main(new RunnerMybatis(), args);
     }
 }

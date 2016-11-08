@@ -2,5 +2,6 @@ include 'core'
 include 'jdbc'
 include 'eclipse-link'
 include 'hibernate'
+include 'mybatis'
 
 rootProject.name = 'jdblender'

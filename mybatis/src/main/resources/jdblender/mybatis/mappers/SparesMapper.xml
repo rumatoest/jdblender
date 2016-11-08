@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="jdblender.mybatis.mappers.SparesMapper">
+    <resultMap id="spare" autoMapping="true" type="jdblender.mybatis.dao.Spare" >
+        <id property="id" column="id" />
+    </resultMap>
+
+    <resultMap id="spareObj" autoMapping="true" type="jdblender.mybatis.dao.Spare" extends="spare">
+        <association property="brand" javaType="jdblender.mybatis.dao.Brand" columnPrefix="brand_" autoMapping="true"/>
+    </resultMap>
+    
+    
+    <select id="findSpares" resultMap="spare" >
+        SELECT s.id, s.name, s.label, s.flag, s.num, s.brand_id FROM spares s
+        <where>
+            <if test="label != null">
+                s.label = #{label}
+            </if>
+            <if test="flag != null">
+                AND s.flag = #{flag} 
+            </if>
+            <if test="nFrom != null">
+                <if test="nTo== null">
+                    AND s.num = #{nFrom}
+                </if>
+                <if test="nTo!= null">
+                <![CDATA[ 
+                    AND ( s.num >= #{nFrom} AND s.num <= #{nTo} ) 
+                ]]>
+                </if>
+            </if>
+        </where>
+    </select>
+</mapper>
