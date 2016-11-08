@@ -15,9 +15,9 @@
       -->
       
     </properties>
-    <class>dbshaker.eclipselink.model.Brand</class>
-    <class>dbshaker.eclipselink.model.Series</class>
-    <class>dbshaker.eclipselink.model.Model</class>
-    <class>dbshaker.eclipselink.model.Spare</class>
+    <class>jdblender.eclipselink.model.Brand</class>
+    <class>jdblender.eclipselink.model.Series</class>
+    <class>jdblender.eclipselink.model.Model</class>
+    <class>jdblender.eclipselink.model.Spare</class>
   </persistence-unit>
 </persistence>

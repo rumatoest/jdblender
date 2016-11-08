@@ -1,5 +1,5 @@
 apply plugin: 'application'
-mainClassName = "dbshaker.eclipselink.AppEclipse"
+mainClassName = "jdblender.eclipselink.AppEclipse"
 
 applicationDefaultJvmArgs = ["-XX:CompileThreshold=100"]
 
@@ -30,5 +30,5 @@ tasks.withType(JavaCompile){
 }
 
 run {
-    args = ["${projectDir}/report-${project.name}.csv",]
+    args = ["${rootProject.projectDir}/report-${project.name}.csv",]
 }

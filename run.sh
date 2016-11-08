@@ -23,10 +23,7 @@ run_one() {
     while [  $COUNTER -lt $CYCLES ]; do
         let COUNTER=COUNTER+1
         echo "CYCLE $COUNTER"
-        ./gradlew :$1:run
-
-        # Fix to exit loop on Ctrl+C
-        test $? -gt 128 && break;
+        ./gradlew :$1:run || break
     done
 }
 
@@ -37,10 +34,7 @@ run_all() {
     while [  $COUNTER -lt $CYCLES ]; do
         let COUNTER=COUNTER+1
         echo "CYCLE $COUNTER"
-        ./gradlew run
-
-        # Fix to exit loop on Ctrl+C
-        test $? -gt 128 && break;
+        ./gradlew run || break
     done
 }
 

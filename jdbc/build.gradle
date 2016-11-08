@@ -1,5 +1,5 @@
 apply plugin: 'application'
-mainClassName = "dbshaker.jdbc.AppJdbc"
+mainClassName = "jdblender.jdbc.AppJdbc"
 
 applicationDefaultJvmArgs = ["-XX:CompileThreshold=100"]
 
@@ -8,5 +8,5 @@ dependencies {
 }
 
 run {
-    args = ["${projectDir}/report-${project.name}.csv",]
+    args = ["${rootProject.projectDir}/report-${project.name}.csv",]
 }

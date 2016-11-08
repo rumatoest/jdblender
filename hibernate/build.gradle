@@ -1,6 +1,6 @@
 apply plugin: 'application'
 apply plugin: 'org.hibernate.orm'
-mainClassName = "dbshaker.hibernate.AppHibernate"
+mainClassName = "jdblender.hibernate.AppHibernate"
 
 applicationDefaultJvmArgs = ["-XX:CompileThreshold=100"]
 
@@ -28,6 +28,6 @@ hibernate {
 }
 
 run {
-    systemProperties = ['java.util.logging.config.file' : "${projectDir}/logging.properties"]
-    args = ["${projectDir}/report-${project.name}.csv",]
+    systemProperties = ['java.util.logging.config.file' : "${projectDir}/logging.properties",]
+    args = ["${rootProject.projectDir}/report-${project.name}.csv",]
 }

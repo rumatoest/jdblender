@@ -11,9 +11,9 @@
         <!--<property name="hibernate.session.events.log">false</property>-->
         <!--<property name="hibernate.enable_lazy_load_no_trans">true</property>-->
         
-        <mapping class="dbshaker.hibernate.model.Brand"/>
-        <mapping class="dbshaker.hibernate.model.Series"/>
-        <mapping class="dbshaker.hibernate.model.Model"/>
-        <mapping class="dbshaker.hibernate.model.Spare"/>
+        <mapping class="jdblender.hibernate.model.Brand"/>
+        <mapping class="jdblender.hibernate.model.Series"/>
+        <mapping class="jdblender.hibernate.model.Model"/>
+        <mapping class="jdblender.hibernate.model.Spare"/>
     </session-factory>
 </hibernate-configuration>
