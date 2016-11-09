@@ -1,7 +1,11 @@
-package jdblender.mybatis.dao;
+package jdblender.jdbc.domain;
 
 import jdblender.core.domain.Brand;
 
+/**
+ *
+ * @author rumatoest
+ */
 public class Spare implements jdblender.core.domain.Spare, jdblender.core.domain.SpareObj {
 
     private long id;

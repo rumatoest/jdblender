@@ -1,6 +1,6 @@
-package jdblender.mybatis.dao;
+package jdblender.jdbc.domain;
 
-import java.util.Set;
+import java.util.List;
 
 public class Model implements jdblender.core.domain.Model, jdblender.core.domain.ModelObj {
 
@@ -12,7 +12,7 @@ public class Model implements jdblender.core.domain.Model, jdblender.core.domain
 
     private Series series;
 
-    private Set<Spare> spares;
+    private List<Spare> spares;
 
     @Override
     public long getId() {
@@ -51,11 +51,11 @@ public class Model implements jdblender.core.domain.Model, jdblender.core.domain
     }
 
     @Override
-    public Set<Spare> getSpares() {
+    public List<Spare> getSpares() {
         return spares;
     }
 
-    public void setSpares(Set<Spare> spares) {
+    public void setSpares(List<Spare> spares) {
         this.spares = spares;
     }
 }

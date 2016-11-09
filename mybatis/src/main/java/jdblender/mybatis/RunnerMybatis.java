@@ -2,10 +2,10 @@ package jdblender.mybatis;
 
 import jdblender.core.DbConnection;
 import jdblender.core.FrameworkRunner;
-import jdblender.mybatis.dao.Brand;
-import jdblender.mybatis.dao.Model;
-import jdblender.mybatis.dao.Series;
-import jdblender.mybatis.dao.Spare;
+import jdblender.mybatis.model.Brand;
+import jdblender.mybatis.model.Model;
+import jdblender.mybatis.model.Series;
+import jdblender.mybatis.model.Spare;
 import jdblender.mybatis.mappers.BrandsMapper;
 import jdblender.mybatis.mappers.ModelsMapper;
 import jdblender.mybatis.mappers.SeriesMapper;

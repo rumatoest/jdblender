@@ -1,4 +1,4 @@
-package jdblender.mybatis.dao;
+package jdblender.mybatis.model;
 
 public class Brand implements jdblender.core.domain.Brand {
 

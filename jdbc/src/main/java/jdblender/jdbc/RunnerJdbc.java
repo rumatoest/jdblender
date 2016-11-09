@@ -3,10 +3,10 @@ package jdblender.jdbc;
 import jdblender.core.DbConnection;
 import jdblender.core.FrameworkRunner;
 import jdblender.core.domain.ModelObj;
-import jdblender.jdbc.dao.Brand;
-import jdblender.jdbc.dao.Model;
-import jdblender.jdbc.dao.Series;
-import jdblender.jdbc.dao.Spare;
+import jdblender.jdbc.domain.Brand;
+import jdblender.jdbc.domain.Model;
+import jdblender.jdbc.domain.Series;
+import jdblender.jdbc.domain.Spare;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -15,7 +15,6 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashSet;
 
 /**
  *
@@ -293,7 +292,7 @@ public class RunnerJdbc implements FrameworkRunner {
             ps.setLong(1, id);
             ResultSet rs = ps.executeQuery();
 
-            HashSet<Spare> spares = new HashSet<>();
+            ArrayList<Spare> spares = new ArrayList<>();
             while (rs.next()) {
                 spares.add(resultToSpareObj(rs));
             }

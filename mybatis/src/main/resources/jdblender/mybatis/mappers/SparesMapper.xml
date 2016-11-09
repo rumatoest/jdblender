@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="jdblender.mybatis.mappers.SparesMapper">
-    <resultMap id="spare" autoMapping="true" type="jdblender.mybatis.dao.Spare" >
+    <resultMap id="spare" autoMapping="true" type="jdblender.mybatis.model.Spare" >
         <id property="id" column="id" />
     </resultMap>
 
-    <resultMap id="spareObj" autoMapping="true" type="jdblender.mybatis.dao.Spare" extends="spare">
-        <association property="brand" javaType="jdblender.mybatis.dao.Brand" columnPrefix="brand_" autoMapping="true"/>
+    <resultMap id="spareObj" autoMapping="true" type="jdblender.mybatis.model.Spare" extends="spare">
+        <association property="brand" javaType="jdblender.mybatis.model.Brand" columnPrefix="brand_" autoMapping="true"/>
     </resultMap>
     
     

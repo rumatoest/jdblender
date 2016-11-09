@@ -1,13 +1,14 @@
 package jdblender.mybatis.mappers;
 
-import jdblender.mybatis.dao.Model;
-import jdblender.mybatis.dao.Spare;
+import jdblender.mybatis.model.Model;
+import jdblender.mybatis.model.Spare;
+
 import org.apache.ibatis.annotations.Insert;
 import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.ResultMap;
 import org.apache.ibatis.annotations.Select;
 
-import java.util.Set;
+import java.util.List;
 
 public interface ModelsMapper {
 
@@ -26,7 +27,7 @@ public interface ModelsMapper {
 
     public Model getWithSpares(long id);
 
-    public Set<Spare> findSparesForModel(long id);
+    public List<Spare> findSparesForModel(long id);
 
     @Insert("INSERT INTO models (id, series_id, name) VALUES (#{id},#{seriesId},#{name})")
     public void create(Model model);

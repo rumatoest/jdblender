@@ -1,6 +1,7 @@
 package jdblender.mybatis.mappers;
 
-import jdblender.mybatis.dao.Series;
+import jdblender.mybatis.model.Series;
+
 import org.apache.ibatis.annotations.Insert;
 import org.apache.ibatis.annotations.ResultMap;
 import org.apache.ibatis.annotations.Select;

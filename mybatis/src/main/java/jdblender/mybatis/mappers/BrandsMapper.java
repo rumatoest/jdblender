@@ -1,8 +1,8 @@
 package jdblender.mybatis.mappers;
 
-import jdblender.mybatis.dao.Brand;
+import jdblender.mybatis.model.Brand;
+
 import org.apache.ibatis.annotations.Insert;
-import org.apache.ibatis.annotations.ResultMap;
 import org.apache.ibatis.annotations.Select;
 
 public interface BrandsMapper {

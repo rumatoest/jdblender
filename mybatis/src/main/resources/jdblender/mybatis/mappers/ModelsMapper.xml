@@ -1,39 +1,39 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="jdblender.mybatis.mappers.ModelsMapper">
-    <resultMap id="modelObj" autoMapping="true" type="jdblender.mybatis.dao.Model" >
+    <resultMap id="modelObj" autoMapping="true" type="jdblender.mybatis.model.Model" >
         <id property="id" column="id" />
-        <association property="series" javaType="jdblender.mybatis.dao.Series"  autoMapping="true">
+        <association property="series" javaType="jdblender.mybatis.model.Series"  autoMapping="true">
             <id property="id" column="series_id" />
             <result property="name" column="series_name" />           
             <result property="brandId" column="series_brand_id" />           
-            <association property="brand" javaType="jdblender.mybatis.dao.Brand" columnPrefix="brand_" autoMapping="true"/>
+            <association property="brand" javaType="jdblender.mybatis.model.Brand" columnPrefix="brand_" autoMapping="true"/>
         </association>
     </resultMap>
     
     <!-- Not optimized resultMap - should be slow -->
     <!--
-    <resultMap id="spareObj"  type="jdblender.mybatis.dao.Spare" autoMapping="true" >
-        <association property="brand" javaType="jdblender.mybatis.dao.Brand" columnPrefix="brand_" autoMapping="true" />
+    <resultMap id="spareObj"  type="jdblender.mybatis.model.Spare" autoMapping="true" >
+        <association property="brand" javaType="jdblender.mybatis.model.Brand" columnPrefix="brand_" autoMapping="true" />
     </resultMap>
     -->
 
 
     <!-- Little bit optimized resultMap-->
-    <resultMap id="spareObj"  type="jdblender.mybatis.dao.Spare" >
+    <resultMap id="spareObj"  type="jdblender.mybatis.model.Spare" >
         <id property="id" column="id" />
         <result property="name" column="name" />           
         <result property="brandId" column="brand_id" />           
         <result property="label" column="label" />           
         <result property="flag" column="flag" />           
         <result property="num" column="flag" />           
-        <association property="brand" javaType="jdblender.mybatis.dao.Brand" columnPrefix="brand_">
+        <association property="brand" javaType="jdblender.mybatis.model.Brand" columnPrefix="brand_">
             <id property="id" column="id" />
             <result property="name" column="name" />
         </association>
     </resultMap>
     
-    <resultMap id="modelLinked" autoMapping="true" extends="modelObj"  type="jdblender.mybatis.dao.Model" >
+    <resultMap id="modelLinked" autoMapping="true" extends="modelObj"  type="jdblender.mybatis.model.Model" >
         <collection property="spares" column="id" select="findSparesForModel" fetchType="eager">
         </collection>
     </resultMap>

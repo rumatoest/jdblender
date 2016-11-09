@@ -1,10 +1,9 @@
 package jdblender.eclipselink.model;
 
+import java.util.ArrayList;
 import jdblender.core.domain.SpareObj;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.Set;
+
+import java.util.List;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -76,16 +75,16 @@ public class Model implements jdblender.core.domain.Model, jdblender.core.domain
         joinColumns = @JoinColumn(name = "model_id", referencedColumnName = "id"),
         inverseJoinColumns = @JoinColumn(name = "spare_id", referencedColumnName = "id")
     )
-    private Set<Spare> spares;
+    private List<Spare> spares;
 
-    public void setSpares(Set<Spare> spares) {
+    public void setSpares(List<Spare> spares) {
         this.spares = spares;
     }
 
     @Override
-    public Set<Spare> getSpares() {
+    public List<Spare> getSpares() {
         if (spares == null) {
-            return new HashSet<>();
+            return new ArrayList<>();
         }
         return spares;
     }

@@ -1,0 +1,16 @@
+apply plugin: 'application'
+mainClassName = "jdblender.sjdbc.AppSpringJdbc"
+
+dependencies {
+    compile project(':core')
+
+    // https://mvnrepository.com/artifact/org.springframework/spring-core
+    compile group: 'org.springframework', name: 'spring-context', version: '4.3.3.RELEASE'
+
+    // https://mvnrepository.com/artifact/org.springframework/spring-jdbc
+    compile group: 'org.springframework', name: 'spring-jdbc', version: '4.3.3.RELEASE'
+}
+
+run {
+    args = ["${rootProject.projectDir}/report-${project.name}.csv",]
+}

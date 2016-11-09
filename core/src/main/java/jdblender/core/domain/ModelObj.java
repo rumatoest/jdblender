@@ -1,7 +1,6 @@
 package jdblender.core.domain;
 
-import java.util.Collection;
-import java.util.Set;
+import java.util.List;
 
 /**
  *
@@ -14,5 +13,5 @@ public interface ModelObj {
 
     String getName();
 
-    Set<? extends SpareObj> getSpares();
+    List<? extends SpareObj> getSpares();
 }

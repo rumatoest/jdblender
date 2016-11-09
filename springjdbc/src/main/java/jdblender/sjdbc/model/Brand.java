@@ -1,4 +1,4 @@
-package jdblender.jdbc.dao;
+package jdblender.sjdbc.model;
 
 public class Brand implements jdblender.core.domain.Brand {
 

@@ -1,4 +1,4 @@
-package jdblender.jdbc.dao;
+package jdblender.mybatis.model;
 
 import jdblender.core.domain.Brand;
 
