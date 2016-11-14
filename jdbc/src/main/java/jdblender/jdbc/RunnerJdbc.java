@@ -24,6 +24,11 @@ public class RunnerJdbc implements FrameworkRunner {
     Connection connect;
 
     @Override
+    public int getFactor() {
+        return 1;
+    }
+
+    @Override
     public void init(DbConnection connection) throws Exception {
         this.connect = connect(connection);
     }
@@ -351,5 +356,4 @@ public class RunnerJdbc implements FrameworkRunner {
             return spares;
         }
     }
-
 }

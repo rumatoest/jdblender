@@ -1,4 +1,3 @@
-apply plugin: 'application'
 mainClassName = "jdblender.mybatis.AppMybatis"
 
 dependencies {
@@ -6,8 +5,4 @@ dependencies {
     
     // https://mvnrepository.com/artifact/org.mybatis/mybatis
     compile group: 'org.mybatis', name: 'mybatis', version: '3.4.1'
-}
-
-run {
-    args = ["${rootProject.projectDir}/report-${project.name}.csv",]
 }

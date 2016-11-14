@@ -1,8 +1,7 @@
-apply plugin: 'application'
 apply plugin: 'org.hibernate.orm'
 mainClassName = "jdblender.hibernate.AppHibernate"
 
-applicationDefaultJvmArgs = ["-XX:CompileThreshold=100"]
+
 
 dependencies {
     compile project(':core')
@@ -28,6 +27,5 @@ hibernate {
 }
 
 run {
-    systemProperties = ['java.util.logging.config.file' : "${projectDir}/logging.properties",]
-    args = ["${rootProject.projectDir}/report-${project.name}.csv",]
+    systemProperty 'java.util.logging.config.file', "${projectDir}/logging.properties"
 }

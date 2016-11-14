@@ -1,12 +1,5 @@
-apply plugin: 'application'
 mainClassName = "jdblender.jdbc.AppJdbc"
-
-applicationDefaultJvmArgs = ["-XX:CompileThreshold=100"]
 
 dependencies {
     compile project(':core')
-}
-
-run {
-    args = ["${rootProject.projectDir}/report-${project.name}.csv",]
 }

@@ -32,6 +32,11 @@ public class RunnerHibernate implements FrameworkRunner {
     private SparesDao sparesDao;
 
     @Override
+    public int getFactor() {
+        return 1;
+    }
+
+    @Override
     public void init(DbConnection connection) {
         Configuration cfg = new Configuration();
         cfg.setProperty("hibernate.connection.url", connection.uri);
@@ -121,8 +126,8 @@ public class RunnerHibernate implements FrameworkRunner {
     }
 
     @Override
-    public void linkModel2Spare(long spareId, long modelVariantId) {
-        modelsDao.link2Spare(spareId, spareId);
+    public void linkModel2Spare(long spareId, long modelId) {
+        modelsDao.link2Spare(spareId, modelId);
     }
 
     @Override
@@ -139,4 +144,5 @@ public class RunnerHibernate implements FrameworkRunner {
     public Collection<Spare> getSpares(String label, Boolean flag, Integer numFromInclusive, Integer numToInclusive) throws Exception {
         return sparesDao.findSpares(label, flag, numFromInclusive, numToInclusive);
     }
+
 }

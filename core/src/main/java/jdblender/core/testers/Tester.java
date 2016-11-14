@@ -2,13 +2,11 @@ package jdblender.core.testers;
 
 import jdblender.core.CallbackQuery;
 import jdblender.core.Scores;
+
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.IntStream;
 
-/**
- * Calculate.
- */
 public class Tester {
 
     /**
@@ -23,8 +21,8 @@ public class Tester {
         if (heatDelta > 250_000) {
             heatDelta = 250_000;
         }
-        if (heatDelta < 2000) {
-            heatDelta = 2000;
+        if (heatDelta < 2500 && (idFrom - idToInclusive) > 5000) {
+            heatDelta = (idToInclusive - idFrom) / 2;
         }
         int idHeat = idFrom + heatDelta;
 

@@ -2,14 +2,14 @@ package jdblender.mybatis;
 
 import jdblender.core.DbConnection;
 import jdblender.core.FrameworkRunner;
-import jdblender.mybatis.model.Brand;
-import jdblender.mybatis.model.Model;
-import jdblender.mybatis.model.Series;
-import jdblender.mybatis.model.Spare;
 import jdblender.mybatis.mappers.BrandsMapper;
 import jdblender.mybatis.mappers.ModelsMapper;
 import jdblender.mybatis.mappers.SeriesMapper;
 import jdblender.mybatis.mappers.SparesMapper;
+import jdblender.mybatis.model.Brand;
+import jdblender.mybatis.model.Model;
+import jdblender.mybatis.model.Series;
+import jdblender.mybatis.model.Spare;
 
 import org.apache.ibatis.mapping.Environment;
 import org.apache.ibatis.session.Configuration;
@@ -18,7 +18,7 @@ import org.apache.ibatis.session.SqlSessionFactory;
 import org.apache.ibatis.session.SqlSessionFactoryBuilder;
 import org.apache.ibatis.transaction.TransactionFactory;
 import org.apache.ibatis.transaction.jdbc.JdbcTransactionFactory;
-import org.h2.jdbcx.JdbcDataSource;
+import org.h2.jdbcx.JdbcConnectionPool;
 
 import java.util.Collection;
 
@@ -27,15 +27,16 @@ class RunnerMybatis implements FrameworkRunner {
     SqlSessionFactory sqlSessionFactory;
 
     @Override
-    public void init(DbConnection connection) throws Exception {
+    public int getFactor() {
+        return 1;
+    }
 
-        JdbcDataSource ds = new JdbcDataSource();
-        ds.setURL(connection.uri);
-        ds.setUser(connection.username);
-        ds.setPassword(connection.password);
+    @Override
+    public void init(DbConnection connection) throws Exception {
+        JdbcConnectionPool pool = JdbcConnectionPool.create(connection.uri, connection.username, connection.password);
 
         TransactionFactory transactionFactory = new JdbcTransactionFactory();
-        Environment environment = new Environment("jdblender", transactionFactory, ds);
+        Environment environment = new Environment("jdblender", transactionFactory, pool);
 
         Configuration cfg = new Configuration(environment);
         cfg.setMapUnderscoreToCamelCase(true);

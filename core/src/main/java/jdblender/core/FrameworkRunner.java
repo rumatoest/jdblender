@@ -16,6 +16,11 @@ import java.util.Collection;
  * @author rumatoest
  */
 public interface FrameworkRunner {
+    
+    /**
+     * @return By default return 1
+     */
+    int getFactor();
 
     /**
      * Will call it once before tests begin.

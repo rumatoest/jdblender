@@ -36,6 +36,11 @@ public class RunnerSpringJdbc implements FrameworkRunner {
     SparesDao sparesDao;
 
     @Override
+    public int getFactor() {
+        return 1;
+    }
+
+    @Override
     public void init(DbConnection connection) throws Exception {
         h2ds.setURL(connection.uri);
         h2ds.setUser(connection.username);
@@ -120,5 +125,4 @@ public class RunnerSpringJdbc implements FrameworkRunner {
     public void linkModel2SpareOptimized(long modelId, long spareId) throws Exception {
         modelsDao.link2Spare(modelId, spareId);
     }
-
 }

@@ -1,7 +1,4 @@
-apply plugin: 'application'
 mainClassName = "jdblender.eclipselink.AppEclipse"
-
-applicationDefaultJvmArgs = ["-XX:CompileThreshold=100"]
 
 dependencies {
     compile project(':core')
@@ -27,8 +24,4 @@ tasks.withType(JavaCompile){
     doLast{
         tasks.performJPAWeaving.execute()
     }
-}
-
-run {
-    args = ["${rootProject.projectDir}/report-${project.name}.csv",]
 }

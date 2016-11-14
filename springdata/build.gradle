@@ -1,0 +1,39 @@
+apply plugin: "io.spring.dependency-management"
+
+mainClassName = "jdblender.sdata.AppSpringData"
+
+apply plugin: 'org.hibernate.orm'
+
+hibernate {
+    enhance {
+        enableLazyInitialization= true
+        enableDirtyTracking = true
+        enableAssociationManagement = true
+    }
+}
+
+buildscript {
+    repositories {
+        mavenCentral()
+    }
+    dependencies {
+        classpath "io.spring.gradle:dependency-management-plugin:0.6.1.RELEASE"
+        classpath "org.hibernate:hibernate-gradle-plugin:5.1.2.Final"
+    }
+}
+
+dependencyManagement {
+    imports {
+        mavenBom 'org.springframework.data:spring-data-releasetrain:Hopper-SR4'
+    }
+}
+
+dependencies {
+    compile project(':core')
+    
+    compile 'org.springframework.data:spring-data-jpa:1.10.4.RELEASE'
+    
+    // Fails to work with latests 5.2.x branch
+    compile 'org.hibernate:hibernate-core:5.1.2.Final'
+    compile 'org.hibernate:hibernate-entitymanager:5.1.2.Final'
+}

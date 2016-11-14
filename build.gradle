@@ -1,9 +1,36 @@
 subprojects {
     apply plugin: 'java'
     group = 'jdblender'
-    version = '0.0.1'
+    version = '0.1'
+    
 
     repositories {
         mavenCentral()
+    }
+}
+
+configure([
+        project(':jdbc'), 
+        project(':springjdbc'), 
+        project(':eclipse-link'),
+        project(':hibernate'),
+        project(':mybatis'),
+        project(':springdata'),
+    ]) {
+    
+    apply plugin: 'application'
+    
+    
+    run {
+        if(project.hasProperty("jit") && "NONE" == jit) {
+            //println("JIT DISABLED")
+            systemProperty 'java.compiler', 'NONE'
+            environment "JIT", "NONE"
+        } else {
+            //println("JIT ENABLED")
+            jvmArgs = ["-XX:CompileThreshold=2000"]
+        }
+    
+        args = ["${rootProject.projectDir}/report-${project.name}.csv", System.getProperty("args", "")]
     }
 }

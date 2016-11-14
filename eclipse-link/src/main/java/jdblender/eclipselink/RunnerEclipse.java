@@ -11,8 +11,8 @@ import jdblender.eclipselink.model.Brand;
 import jdblender.eclipselink.model.Model;
 import jdblender.eclipselink.model.Series;
 import jdblender.eclipselink.model.Spare;
-import java.util.Collection;
 
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 import javax.persistence.EntityManagerFactory;
@@ -32,6 +32,11 @@ public class RunnerEclipse implements FrameworkRunner {
     private ModelsDao modelsDao;
 
     private SparesDao sparesDao;
+
+    @Override
+    public int getFactor() {
+        return 1;
+    }
 
     @Override
     public void init(DbConnection connection) {

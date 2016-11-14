@@ -1,5 +1,6 @@
 package jdblender.core.testers;
 
+import jdblender.core.BlenderApp;
 import jdblender.core.FrameworkRunner;
 import jdblender.core.Scores;
 import jdblender.core.domain.ModelObj;
@@ -10,21 +11,18 @@ import org.apache.commons.lang3.RandomStringUtils;
 
 import java.util.Collection;
 import java.util.logging.Logger;
-import org.apache.commons.lang3.RandomUtils;
 
 public class SparesTester {
 
     private static final Logger LOG = Logger.getLogger(SparesTester.class.getCanonicalName());
 
-    public static int ID_MIN = 1;
+    public static final int ID_MIN = 1;
 
-    public static int ID_MAX = 1_000_000;
+    private static final int ID_MAX = 1_000_000;
 
-    public static int LINKS_MAX = 2_000_000;
+    private static final int LINKS_MAX = 2_000_000;
 
-    public static int RATIO = ID_MAX / ModelsTester.ID_MAX;
-
-    static int MAX_NUM_RANGE = 5000;
+    private static final int MAX_NUM_RANGE = 5000;
 
     static char[] CHARS = new char[]{'0', '1', '2', '3', '4', '5', '6', '7', '8', '9',
         'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z',
@@ -35,20 +33,77 @@ public class SparesTester {
         'Û', 'Ü', 'Ý', 'Þ', 'ß', 'à', 'á', 'â', 'ã', 'ä', 'å', 'æ', 'ç', 'è', 'é', 'ê', 'ë', 'ì', 'í', 'î', 'ï', 'ð', 'ñ', 'ò', 'ó', 'ô',
         'õ', 'ö', 'ø', 'ù', 'ú', 'û', 'ü', 'ý', 'þ', 'ÿ'};
 
+    private final BlenderApp app;
+
     private final FrameworkRunner runner;
 
-    public SparesTester(FrameworkRunner runner) {
+    private final BrandsTester brandsTst;
+
+    private final ModelsTester modelsTst;
+
+    public SparesTester(BlenderApp app, FrameworkRunner runner, BrandsTester brandsTst, ModelsTester modelsTst) {
+        this.app = app;
         this.runner = runner;
+        this.brandsTst = brandsTst;
+        this.modelsTst = modelsTst;
+    }
+
+    private int idMax;
+
+    public int getIdMax() {
+        if (idMax == 0) {
+            if (app.getFactor() > 50) {
+                idMax = 20_000;
+            } else if (app.getFactor() > 1) {
+                idMax = ID_MAX / app.getFactor();
+            } else {
+                idMax = ID_MAX;
+            }
+        }
+        return idMax;
+    }
+
+    private int linksMax;
+
+    public int getLinksMax() {
+        if (linksMax == 0) {
+            if (app.getFactor() > 50) {
+                linksMax = 40_000;
+            } else if (app.getFactor() > 1) {
+                linksMax = LINKS_MAX / app.getFactor();
+            } else {
+                linksMax = LINKS_MAX;
+            }
+        }
+        return linksMax;
+    }
+
+    private int numRange;
+
+    public int getNumRange() {
+        if (numRange == 0) {
+            numRange = app.getFactor() > 1 ? MAX_NUM_RANGE / app.getFactor() : MAX_NUM_RANGE;
+        }
+        return numRange;
+    }
+
+    private int ratio;
+
+    public int getRatio() {
+        if (ratio == 0) {
+            ratio = getLinksMax() / modelsTst.getIdMax();
+        }
+        return ratio;
     }
 
     public Scores insertData() {
         LOG.info("Inserting spares");
-        return Tester.test(ID_MIN, ID_MAX, id -> insertOne(id));
+        return Tester.test(ID_MIN, getIdMax(), id -> insertOne(id));
     }
 
     long insertOne(int id) throws Exception {
-        int brandId = id % BrandsTester.ID_MAX + 1;
-        int num = id % MAX_NUM_RANGE + 1;
+        int brandId = id % brandsTst.getIdMax() + 1;
+        int num = id % getNumRange() + 1;
         boolean flag = id % 2 == 0;
 
         runner.createSpare(
@@ -60,19 +115,19 @@ public class SparesTester {
             num
         );
 
-        if (id % (ID_MAX / 5) == 0) {
+        if (id % (getIdMax() / 5) == 0) {
             LOG.info("Inserted spare " + id);
         }
         return 1;
     }
 
     char[] getLabelChars(int idx) {
-        return new char[]{CHARS[idx % CHARS.length], CHARS[(ID_MAX - idx) % CHARS.length]};
+        return new char[]{CHARS[idx % CHARS.length], CHARS[(getIdMax() - idx) % CHARS.length]};
     }
 
     public Scores selectSome() {
         LOG.info("Selecting spares");
-        return Tester.test(ID_MIN, ID_MAX / 2, id -> selectOne(id));
+        return Tester.test(ID_MIN, getIdMax() / 2, id -> selectOne(id));
     }
 
     long selectOne(int id) throws Exception {
@@ -82,7 +137,7 @@ public class SparesTester {
 
     public Scores selectSomeObj() {
         LOG.info("Selecting spares OBJ");
-        return Tester.test(ID_MAX / 2, ID_MAX, id -> selectOneObj(id));
+        return Tester.test(getIdMax() / 2, getIdMax(), id -> selectOneObj(id));
     }
 
     long selectOneObj(int id) throws Exception {
@@ -90,9 +145,14 @@ public class SparesTester {
         return hashSpareObj(spare);
     }
 
+    int slowInsertLinks() {
+        return getLinksMax() < 50_000 ? Math.round((float)getLinksMax() / 2) : 25_000;
+    }
+
     public Scores insertLinks() {
         LOG.info("Insertings spares<->models m2m");
-        return Tester.test(ID_MIN, 25000, id -> insertLink(id));
+
+        return Tester.test(ID_MIN, slowInsertLinks(), id -> insertLink(id));
     }
 
     long insertLink(int idx) throws Exception {
@@ -105,7 +165,7 @@ public class SparesTester {
 
     public Scores insertLinksFast() {
         LOG.info("Insertings spares<->models m2m optimized");
-        return Tester.test(25001, LINKS_MAX, id -> insertLinkFast(id));
+        return Tester.test(slowInsertLinks() + 1, getLinksMax(), id -> insertLinkFast(id));
     }
 
     long insertLinkFast(int idx) throws Exception {
@@ -114,7 +174,7 @@ public class SparesTester {
 
         runner.linkModel2SpareOptimized(modelId, spareId);
 
-        if (idx % (LINKS_MAX / 5) == 0) {
+        if (idx % (getLinksMax() / 5) == 0) {
             LOG.info("Inserted M2M " + idx);
         }
 
@@ -122,23 +182,24 @@ public class SparesTester {
     }
 
     long linkModelId(int idx) {
-        return idx % ModelsTester.ID_MAX + 1;
+        return idx % modelsTst.getIdMax() + 1;
     }
 
     long linkSpareId(int idx) {
-        int pass = idx / ModelsTester.ID_MAX;
+        int pass = idx / modelsTst.getIdMax();
 
         long modelId = linkModelId(idx);
-        return ((modelId - 1) * RATIO + pass - 1) % ID_MAX + 1;
+        long id = ((modelId - 1) * getRatio() + pass - 1) % getIdMax() + 1;
+        return id;
     }
 
     long linkSpareFirstId(int modelId) {
-        return ((modelId - 1) * RATIO - 1) % ID_MAX + 1;
+        return ((modelId - 1) * getRatio() - 1) % getIdMax() + 1;
     }
 
     public Scores selectSomeObjWithLinks() {
         LOG.info("Selecting model OBJ + spares");
-        return Tester.test(ModelsTester.ID_MIN, ModelsTester.ID_MAX / 2, id -> selectModelObjWithLinks(id));
+        return Tester.test(ModelsTester.ID_MIN, modelsTst.getIdMax() / 2, id -> selectModelObjWithLinks(id));
     }
 
     public long selectModelObjWithLinks(int idx) throws Exception {
@@ -148,7 +209,7 @@ public class SparesTester {
 
         ModelObj mod = runner.getModelObjWithSpares(idx);
         long spareFist = linkSpareFirstId(idx);
-        long spareLast = spareFist + RATIO;
+        long spareLast = spareFist + getRatio();
 
         int matched = 0;
         long hash = 0L;
@@ -159,8 +220,8 @@ public class SparesTester {
             }
         }
 
-        if (matched < RATIO) {
-            throw new Exception("Found " + matched + " spares but expected at least " + RATIO
+        if (matched < getRatio()) {
+            throw new Exception("Found " + matched + " spares but expected at least " + getRatio()
                 + " model_id " + mod.getId());
         }
 
@@ -169,7 +230,12 @@ public class SparesTester {
 
     public Scores selectSpares() {
         LOG.info("Selecting spares with dynamic query");
-        return Tester.test(37, 20_000, id -> selectRandomSpares(id));
+        int idTo = getLinksMax() / 100;
+        if (idTo < 6000) {
+            idTo = 6000;
+        }
+
+        return Tester.test(37, idTo, id -> selectRandomSpares(id));
     }
 
     public long selectRandomSpares(int idx) throws Exception {
@@ -190,7 +256,7 @@ public class SparesTester {
             label = new String(getLabelChars(idx));
         }
 
-        Integer numFrom = idx % MAX_NUM_RANGE + 1;
+        Integer numFrom = idx % getNumRange() + 1;
         if (flag != null && label != null && idx % 1109 == 0) {
             numFrom = null;
         }

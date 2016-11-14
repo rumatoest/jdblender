@@ -14,17 +14,20 @@ import java.util.Collections;
 
 public class ReportWriter {
 
-    public static void write(Path reportPath, Collection<Scores> scores) throws IOException {
+    public static void write(Path reportPath, Collection<Scores> scores, int factor) throws IOException {
         if (!Files.exists(reportPath)) {
             Files.createFile(reportPath);
             Files.write(reportPath, Arrays.asList(scoresHeader(scores)));
         }
 
-        StringBuilder sb = new StringBuilder(LocalDateTime.now().format(DateTimeFormatter.ISO_LOCAL_DATE_TIME));
+        boolean noJit = "NONE".equals(System.getenv("JIT"));
+
+        StringBuilder sb = new StringBuilder(
+            LocalDateTime.now().format(DateTimeFormatter.ISO_LOCAL_DATE_TIME))
+            .append(",").append(noJit ? "0" : "1")
+            .append(",").append(factor);
         for (Scores s : scores) {
-            if (sb.length() > 0) {
-                sb.append(',');
-            }
+            sb.append(',');
 //            sb.append(s.iterations()).append(',');
 //            sb.append(s.timeSec()).append(',');
 //            sb.append(BigDecimal.valueOf(s.timeSec()).setScale(2, RoundingMode.HALF_UP)).append(',');
@@ -38,12 +41,10 @@ public class ReportWriter {
 
     static String scoresHeader(Collection<Scores> scores) {
         long code = 0L;
-        StringBuilder sb = new StringBuilder("TIME");
+        StringBuilder sb = new StringBuilder("TIME,JIT,FACTOR");
         for (Scores s : scores) {
             code = code / 2 + s.getCode() / 2;
-            if (sb.length() > 0) {
-                sb.append(',');
-            }
+            sb.append(',');
 //            sb.append(s.label()).append("[num runs],");
 //            sb.append(s.label()).append("[time sec],");
             sb.append(s.label()).append(" [mu]");

@@ -4,5 +4,6 @@ include 'springjdbc'
 include 'eclipse-link'
 include 'hibernate'
 include 'mybatis'
+include 'springdata'
 
 rootProject.name = 'jdblender'
