@@ -16,6 +16,7 @@ configure([
         project(':hibernate'),
         project(':mybatis'),
         project(':springdata'),
+        project(':jooq'),
     ]) {
     
     apply plugin: 'application'

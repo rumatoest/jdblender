@@ -47,9 +47,9 @@ public class ModelsDao {
 
     public void link2Spare(long modelId, long spareId) {
         try (Session s = sf.openSession()) {
+            Transaction tx = s.beginTransaction();
             Model model = s.get(Model.class, modelId);
             model.getSpares().add(s.get(Spare.class, spareId));
-            Transaction tx = s.beginTransaction();
             s.save(model);
             tx.commit();
         }

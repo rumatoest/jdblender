@@ -1,0 +1,62 @@
+mainClassName = "jdblender.jooq.AppJooq"
+
+// These imports are needed further down
+// -------------------------------------
+import javax.xml.bind.JAXB
+import org.jooq.util.GenerationTool
+
+dependencies {
+    compile project(':core')
+    compile 'org.jooq:jooq:3.8.5'
+
+    compile group: 'com.h2database', name: 'h2', version: '1.4.192'
+}
+
+
+buildscript {
+    repositories {
+        mavenLocal()
+        mavenCentral()
+    }
+
+    dependencies {
+        classpath 'org.jooq:jooq-codegen:3.8.5'
+        classpath 'com.h2database:h2:1.4.192'
+    }
+}
+
+
+task generate {
+    doLast {
+        // Use your favourite XML builder to construct the code generation configuration file
+        // ----------------------------------------------------------------------------------
+        def writer = new StringWriter()
+        def xml = new groovy.xml.MarkupBuilder(writer).configuration('xmlns': 'http://www.jooq.org/xsd/jooq-codegen-3.8.0.xsd') {
+            jdbc() {
+                driver('org.h2.Driver')
+                // It does not work with in memory DB so we should dump it on disk first
+                url('jdbc:h2:~/h2db:shaker')
+                user('')
+                password('')
+            }
+            generator() {
+                database() {
+                }
+                generate() {
+                }
+                target() {
+                    packageName('jdblender.jooq.db')
+                    directory('src/main/java')
+                }
+            }
+        }
+        
+        println(writer.toString())
+
+        // Run the code generator
+        // ----------------------
+        GenerationTool.main(
+            JAXB.unmarshal(new StringReader(writer.toString()), org.jooq.util.jaxb.Configuration.class)
+        )        
+    }
+}
