@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="utf-8"?>
+<data-map xmlns="http://cayenne.apache.org/schema/7/modelMap"
+	 xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	 xsi:schemaLocation="http://cayenne.apache.org/schema/7/modelMap http://cayenne.apache.org/schema/7/modelMap.xsd"
+	 project-version="7">
+	<property name="defaultPackage" value="jdblender.cayenne.model"/>
+	<property name="defaultCatalog" value="SHAKER"/>
+	<property name="defaultSchema" value="PUBLIC"/>
+	<db-entity name="BRANDS" schema="PUBLIC" catalog="SHAKER">
+		<db-attribute name="ID" type="BIGINT" isPrimaryKey="true" isMandatory="true" length="19"/>
+		<db-attribute name="NAME" type="VARCHAR" length="16"/>
+	</db-entity>
+	<db-entity name="MODELS" schema="PUBLIC" catalog="SHAKER">
+		<db-attribute name="ID" type="BIGINT" isPrimaryKey="true" isMandatory="true" length="19"/>
+		<db-attribute name="NAME" type="VARCHAR" length="16"/>
+		<db-attribute name="SERIES_ID" type="BIGINT" isMandatory="true" length="19"/>
+	</db-entity>
+	<db-entity name="SERIES" schema="PUBLIC" catalog="SHAKER">
+		<db-attribute name="BRAND_ID" type="BIGINT" isPrimaryKey="true" isMandatory="true" length="19"/>
+		<db-attribute name="ID" type="BIGINT" isMandatory="true" length="19"/>
+		<db-attribute name="NAME" type="VARCHAR" length="16"/>
+	</db-entity>
+	<db-entity name="SPARES" schema="PUBLIC" catalog="SHAKER">
+		<db-attribute name="BRAND_ID" type="BIGINT" isPrimaryKey="true" isMandatory="true" length="19"/>
+		<db-attribute name="FLAG" type="BOOLEAN" length="1"/>
+		<db-attribute name="ID" type="BIGINT" isMandatory="true" length="19"/>
+		<db-attribute name="LABEL" type="CHAR" length="2"/>
+		<db-attribute name="NAME" type="VARCHAR" length="16"/>
+		<db-attribute name="NUM" type="INTEGER" length="10"/>
+	</db-entity>
+	<db-entity name="SPARE_TO_MODEL" schema="PUBLIC" catalog="SHAKER">
+		<db-attribute name="MODEL_ID" type="BIGINT" isPrimaryKey="true" isMandatory="true" length="19"/>
+		<db-attribute name="SPARE_ID" type="BIGINT" isPrimaryKey="true" isMandatory="true" length="19"/>
+	</db-entity>
+	<obj-entity name="Brands" className="jdblender.cayenne.model.Brands" dbEntityName="BRANDS">
+		<obj-attribute name="id" type="long" db-attribute-path="ID"/>
+		<obj-attribute name="name" type="java.lang.String" db-attribute-path="NAME"/>
+	</obj-entity>
+	<obj-entity name="Models" className="jdblender.cayenne.model.Models" dbEntityName="MODELS">
+		<obj-attribute name="id" type="long" db-attribute-path="ID"/>
+		<obj-attribute name="name" type="java.lang.String" db-attribute-path="NAME"/>
+		<obj-attribute name="seriesId" type="long" db-attribute-path="SERIES_ID"/>
+	</obj-entity>
+	<obj-entity name="Series" className="jdblender.cayenne.model.Series" dbEntityName="SERIES">
+		<obj-attribute name="brandId" type="long" db-attribute-path="BRAND_ID"/>
+		<obj-attribute name="id" type="long" db-attribute-path="ID"/>
+		<obj-attribute name="name" type="java.lang.String" db-attribute-path="NAME"/>
+	</obj-entity>
+	<obj-entity name="SpareToModel" className="jdblender.cayenne.model.SpareToModel" dbEntityName="SPARE_TO_MODEL">
+		<obj-attribute name="modelId" type="java.lang.Long" db-attribute-path="MODEL_ID"/>
+		<obj-attribute name="spareId" type="java.lang.Long" db-attribute-path="SPARE_ID"/>
+	</obj-entity>
+	<obj-entity name="Spares" className="jdblender.cayenne.model.Spares" dbEntityName="SPARES">
+		<obj-attribute name="brandId" type="long" db-attribute-path="BRAND_ID"/>
+		<obj-attribute name="flag" type="boolean" db-attribute-path="FLAG"/>
+		<obj-attribute name="id" type="long" db-attribute-path="ID"/>
+		<obj-attribute name="label" type="java.lang.String" db-attribute-path="LABEL"/>
+		<obj-attribute name="name" type="java.lang.String" db-attribute-path="NAME"/>
+		<obj-attribute name="num" type="int" db-attribute-path="NUM"/>
+	</obj-entity>
+	<db-relationship name="series" source="BRANDS" target="SERIES" toDependentPK="true" toMany="false">
+		<db-attribute-pair source="ID" target="BRAND_ID"/>
+	</db-relationship>
+	<db-relationship name="spares" source="BRANDS" target="SPARES" toDependentPK="true" toMany="false">
+		<db-attribute-pair source="ID" target="BRAND_ID"/>
+	</db-relationship>
+	<db-relationship name="series" source="MODELS" target="SERIES" toMany="false">
+		<db-attribute-pair source="SERIES_ID" target="ID"/>
+	</db-relationship>
+	<db-relationship name="spareses" source="MODELS" target="SPARES" toMany="true">
+		<db-attribute-pair source="ID" target="ID"/>
+	</db-relationship>
+	<db-relationship name="brandss" source="SERIES" target="BRANDS" toMany="false">
+		<db-attribute-pair source="BRAND_ID" target="ID"/>
+	</db-relationship>
+	<db-relationship name="models" source="SERIES" target="MODELS" toMany="false">
+		<db-attribute-pair source="ID" target="SERIES_ID"/>
+	</db-relationship>
+	<db-relationship name="brandss" source="SPARES" target="BRANDS" toMany="false">
+		<db-attribute-pair source="BRAND_ID" target="ID"/>
+	</db-relationship>
+	<db-relationship name="untitledRel" source="SPARES" target="MODELS" toMany="false">
+		<db-attribute-pair source="ID" target="ID"/>
+	</db-relationship>
+	<obj-relationship name="series" source="Models" target="Series" deleteRule="Nullify" db-relationship-path="series"/>
+	<obj-relationship name="brand" source="Series" target="Brands" deleteRule="Deny" db-relationship-path="brandss"/>
+	<obj-relationship name="brand" source="Spares" target="Brands" deleteRule="Deny" db-relationship-path="brandss"/>
+</data-map>

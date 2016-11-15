@@ -17,6 +17,7 @@ configure([
         project(':mybatis'),
         project(':springdata'),
         project(':jooq'),
+        project(':cayenne'),
     ]) {
     
     apply plugin: 'application'
