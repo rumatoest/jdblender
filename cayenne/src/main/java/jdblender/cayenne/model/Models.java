@@ -11,8 +11,15 @@ public class Models extends _Models implements Model, ModelObj {
 
     private static final long serialVersionUID = 1L;
 
+    List<? extends SpareObj> spares;
+
     @Override
     public List<? extends SpareObj> getSpares() {
-        return null;
+        return spares;
     }
+
+    public void setSpares(List<? extends SpareObj> spares) {
+        this.spares = spares;
+    }
+
 }
