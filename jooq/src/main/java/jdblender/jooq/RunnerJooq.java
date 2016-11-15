@@ -112,7 +112,7 @@ public class RunnerJooq implements FrameworkRunner {
             .join(SpareToModel.SPARE_TO_MODEL)
             .on(SpareToModel.SPARE_TO_MODEL.SPARE_ID.eq(Spares.SPARES.ID))
             .where(SpareToModel.SPARE_TO_MODEL.MODEL_ID.eq(id))
-            .fetch(r -> new SpareWrapper(r));
+            .fetch(SpareWrapper::of);
 
         Record record = jooq.select().from(Models.MODELS)
             .join(Series.SERIES).on(Series.SERIES.ID.eq(Models.MODELS.SERIES_ID))
@@ -175,7 +175,7 @@ public class RunnerJooq implements FrameworkRunner {
             }
         }
 
-        return query.fetch(r -> new SpareWrapper(r));
+        return query.fetch(SpareWrapper::of);
     }
 
     @Override

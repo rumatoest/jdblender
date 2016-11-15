@@ -15,6 +15,10 @@ public class SpareWrapper implements jdblender.core.domain.Spare, jdblender.core
         this.rec = rec;
     }
 
+    public static SpareWrapper of(Record rec) {
+        return new SpareWrapper(rec);
+    }
+
     public SpareWrapper(SparesRecord spare) {
         this.spare = spare;
     }

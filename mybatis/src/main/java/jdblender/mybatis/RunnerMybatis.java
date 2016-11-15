@@ -49,50 +49,6 @@ class RunnerMybatis implements FrameworkRunner {
         sqlSessionFactory = new SqlSessionFactoryBuilder().build(cfg);
     }
 
-    <T extends Object> T brandsExec(SqlExec<T, BrandsMapper> callback) {
-        try (SqlSession session = sqlSessionFactory.openSession()) {
-            BrandsMapper mapper = session.getMapper(BrandsMapper.class);
-            T result = callback.execute(mapper);
-            if (result instanceof Boolean) {
-                session.commit();
-            }
-            return result;
-        }
-    }
-
-    <T extends Object> T seriesExec(SqlExec<T, SeriesMapper> callback) {
-        try (SqlSession session = sqlSessionFactory.openSession()) {
-            SeriesMapper mapper = session.getMapper(SeriesMapper.class);
-            T result = callback.execute(mapper);
-            if (result instanceof Boolean) {
-                session.commit();
-            }
-            return result;
-        }
-    }
-
-    <T extends Object> T modelsExec(SqlExec<T, ModelsMapper> callback) {
-        try (SqlSession session = sqlSessionFactory.openSession()) {
-            ModelsMapper mapper = session.getMapper(ModelsMapper.class);
-            T result = callback.execute(mapper);
-            if (result instanceof Boolean) {
-                session.commit();
-            }
-            return result;
-        }
-    }
-
-    <T extends Object> T sparesExec(SqlExec<T, SparesMapper> callback) {
-        try (SqlSession session = sqlSessionFactory.openSession()) {
-            SparesMapper mapper = session.getMapper(SparesMapper.class);
-            T result = callback.execute(mapper);
-            if (result instanceof Boolean) {
-                session.commit();
-            }
-            return result;
-        }
-    }
-
     @Override
     public void close() throws Exception {
     }
@@ -103,15 +59,19 @@ class RunnerMybatis implements FrameworkRunner {
         brand.setId(id);
         brand.setName(name);
 
-        brandsExec(maper -> {
-            maper.create(brand);
-            return Boolean.TRUE;
-        });
+        try (SqlSession session = sqlSessionFactory.openSession()) {
+            BrandsMapper mapper = session.getMapper(BrandsMapper.class);
+            mapper.create(brand);
+            session.commit(true);
+        }
     }
 
     @Override
     public Brand getBrand(long id) throws Exception {
-        return brandsExec(m -> m.get(id));
+        try (SqlSession session = sqlSessionFactory.openSession()) {
+            BrandsMapper mapper = session.getMapper(BrandsMapper.class);
+            return mapper.get(id);
+        }
     }
 
     @Override
@@ -121,20 +81,27 @@ class RunnerMybatis implements FrameworkRunner {
         series.setBrandId(brandId);
         series.setName(name);
 
-        seriesExec(m -> {
-            m.create(series);
-            return Boolean.TRUE;
-        });
+        try (SqlSession session = sqlSessionFactory.openSession()) {
+            SeriesMapper mapper = session.getMapper(SeriesMapper.class);
+            mapper.create(series);
+            session.commit(true);
+        }
     }
 
     @Override
     public Series getSeries(long id) throws Exception {
-        return seriesExec(m -> m.get(id));
+        try (SqlSession session = sqlSessionFactory.openSession()) {
+            SeriesMapper mapper = session.getMapper(SeriesMapper.class);
+            return mapper.get(id);
+        }
     }
 
     @Override
     public Series getSeriesObj(long id) throws Exception {
-        return seriesExec(m -> m.getObj(id));
+        try (SqlSession session = sqlSessionFactory.openSession()) {
+            SeriesMapper mapper = session.getMapper(SeriesMapper.class);
+            return mapper.getObj(id);
+        }
     }
 
     @Override
@@ -143,25 +110,36 @@ class RunnerMybatis implements FrameworkRunner {
         model.setId(id);
         model.setSeriesId(seriesId);
         model.setName(name);
-        modelsExec(m -> {
-            m.create(model);
-            return Boolean.TRUE;
-        });
+
+        try (SqlSession session = sqlSessionFactory.openSession()) {
+            ModelsMapper mapper = session.getMapper(ModelsMapper.class);
+            mapper.create(model);
+            session.commit(true);
+        }
     }
 
     @Override
     public Model getModel(long id) throws Exception {
-        return modelsExec(m -> m.get(id));
+        try (SqlSession session = sqlSessionFactory.openSession()) {
+            ModelsMapper mapper = session.getMapper(ModelsMapper.class);
+            return mapper.get(id);
+        }
     }
 
     @Override
     public Model getModelObj(long id) throws Exception {
-        return modelsExec(m -> m.getObj(id));
+        try (SqlSession session = sqlSessionFactory.openSession()) {
+            ModelsMapper mapper = session.getMapper(ModelsMapper.class);
+            return mapper.getObj(id);
+        }
     }
 
     @Override
     public Model getModelObjWithSpares(long id) throws Exception {
-        return modelsExec(m -> m.getWithSpares(id));
+        try (SqlSession session = sqlSessionFactory.openSession()) {
+            ModelsMapper mapper = session.getMapper(ModelsMapper.class);
+            return mapper.getWithSpares(id);
+        }
     }
 
     @Override
@@ -174,45 +152,52 @@ class RunnerMybatis implements FrameworkRunner {
         spare.setFlag(flag);
         spare.setNum(num);
 
-        sparesExec(m -> {
-            m.create(spare);
-            return Boolean.TRUE;
-        });
+        try (SqlSession session = sqlSessionFactory.openSession()) {
+            SparesMapper mapper = session.getMapper(SparesMapper.class);
+            mapper.create(spare);
+            session.commit(true);
+        }
     }
 
     @Override
     public Spare getSpare(long id) throws Exception {
-        return sparesExec(m -> m.get(id));
+        try (SqlSession session = sqlSessionFactory.openSession()) {
+            SparesMapper mapper = session.getMapper(SparesMapper.class);
+            return mapper.get(id);
+        }
     }
 
     @Override
     public Collection<? extends Spare> getSpares(String label, Boolean flag, Integer numFromInclusive, Integer numToInclusive) throws Exception {
-        return sparesExec(m -> m.findSpares(label, flag, numFromInclusive, numToInclusive));
+        try (SqlSession session = sqlSessionFactory.openSession()) {
+            SparesMapper mapper = session.getMapper(SparesMapper.class);
+            return mapper.findSpares(label, flag, numFromInclusive, numToInclusive);
+        }
     }
 
     @Override
     public Spare getSpareObj(long id) throws Exception {
-        return sparesExec(m -> m.getObj(id));
+        try (SqlSession session = sqlSessionFactory.openSession()) {
+            SparesMapper mapper = session.getMapper(SparesMapper.class);
+            return mapper.getObj(id);
+        }
     }
 
     @Override
     public void linkModel2Spare(long modelId, long spareId) throws Exception {
-        modelsExec(m -> {
-            m.link2Spare(modelId, spareId);
-            return Boolean.TRUE;
-        });
+        try (SqlSession session = sqlSessionFactory.openSession()) {
+            ModelsMapper mapper = session.getMapper(ModelsMapper.class);
+            mapper.link2Spare(modelId, spareId);
+            session.commit(true);
+        }
     }
 
     @Override
     public void linkModel2SpareOptimized(long modelId, long spareId) throws Exception {
-        modelsExec(m -> {
-            m.link2Spare(modelId, spareId);
-            return Boolean.TRUE;
-        });
-    }
-
-    interface SqlExec<T, U> {
-
-        T execute(U mapper);
+        try (SqlSession session = sqlSessionFactory.openSession()) {
+            ModelsMapper mapper = session.getMapper(ModelsMapper.class);
+            mapper.link2Spare(modelId, spareId);
+            session.commit(true);
+        }
     }
 }
