@@ -63,7 +63,7 @@ public class RunnerCayenne implements FrameworkRunner {
         series.setId(id);
         series.setName(name);
         series.setBrand(SelectById
-            .query(Brands.class, id)
+            .query(Brands.class, brandId)
             .selectOne(context));
         context.commitChanges();
     }
