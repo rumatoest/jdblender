@@ -1,6 +1,7 @@
 package jdblender.sdata;
 
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.springframework.orm.jpa.JpaTransactionManager;
@@ -12,7 +13,6 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 
 import java.util.Map;
 import javax.sql.DataSource;
-import org.springframework.context.annotation.ComponentScan;
 
 @Configuration
 @ComponentScan("jdblender.sdata")
@@ -38,7 +38,8 @@ public class Config {
         factory.setPackagesToScan("jdblender.sdata.model");
         factory.setDataSource(dataSourceH2());
         Map<String, Object> props = factory.getJpaPropertyMap();
-        //props.put("hibernate.current_session_context_class", "thread");
+        props.put("hibernate.cache.use_query_cache", "false");
+        props.put("hibernate.cache.use_second_level_cache", "false");
         props.put("hibernate.hbm2ddl.auto", "validate");
         //props.put("hibernate.jdbc.batch_size", "100");
         //props.put("hibernate.cache.use_second_level_cache", "false");

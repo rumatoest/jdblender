@@ -7,16 +7,15 @@ import jdblender.cayenne.model.Spares;
 import jdblender.core.DbConnection;
 import jdblender.core.FrameworkRunner;
 import jdblender.core.domain.*;
+
 import org.apache.cayenne.ObjectContext;
 import org.apache.cayenne.configuration.server.ServerRuntime;
 import org.apache.cayenne.configuration.server.ServerRuntimeBuilder;
 import org.apache.cayenne.query.*;
+import org.h2.jdbcx.JdbcConnectionPool;
 
 import java.util.Collection;
 
-/**
- *
- */
 public class RunnerCayenne implements FrameworkRunner {
 
     private ObjectContext context;
@@ -31,9 +30,10 @@ public class RunnerCayenne implements FrameworkRunner {
     @Override
     public void init(DbConnection connection) {
         cayenneRuntime = ServerRuntimeBuilder.builder()
-                .addModule(new CayenneModule())
-                .addConfig("cayenne-project.xml")
-                .build();
+            .addModule(new CayenneModule())
+            .addConfig("cayenne-project.xml")
+            .dataSource(JdbcConnectionPool.create(connection.uri, connection.username, connection.password))
+            .build();
         context = cayenneRuntime.newContext();
     }
 
@@ -191,6 +191,6 @@ public class RunnerCayenne implements FrameworkRunner {
             }
         }
 
-        return (Collection) query.select(context);
+        return (Collection)query.select(context);
     }
 }

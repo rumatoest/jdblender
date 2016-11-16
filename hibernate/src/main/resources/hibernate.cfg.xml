@@ -8,6 +8,8 @@
         <property name="dialect">org.hibernate.dialect.H2Dialect</property>
         <property name="hibernate.current_session_context_class">thread</property>
         <property name="hbm2ddl.auto">validate</property>
+        <property name="hibernate.cache.use_second_level_cache">false</property>
+        <property name="hibernate.cache.use_query_cache">false</property>
         <!--<property name="hibernate.session.events.log">false</property>-->
         <!--<property name="hibernate.enable_lazy_load_no_trans">true</property>-->
         
