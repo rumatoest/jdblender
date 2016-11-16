@@ -9,6 +9,7 @@ import jdblender.core.FrameworkRunner;
 import jdblender.core.domain.*;
 import org.apache.cayenne.ObjectContext;
 import org.apache.cayenne.configuration.server.ServerRuntime;
+import org.apache.cayenne.configuration.server.ServerRuntimeBuilder;
 import org.apache.cayenne.query.*;
 
 import java.util.Collection;
@@ -29,7 +30,10 @@ public class RunnerCayenne implements FrameworkRunner {
 
     @Override
     public void init(DbConnection connection) {
-        cayenneRuntime = new ServerRuntime("cayenne-project.xml");
+        cayenneRuntime = ServerRuntimeBuilder.builder()
+                .addModule(new CayenneModule())
+                .addConfig("cayenne-project.xml")
+                .build();
         context = cayenneRuntime.newContext();
     }
 
@@ -59,7 +63,7 @@ public class RunnerCayenne implements FrameworkRunner {
         series.setId(id);
         series.setName(name);
         series.setBrand(SelectById
-            .query(Brands.class, id)
+            .query(Brands.class, brandId)
             .selectOne(context));
         context.commitChanges();
     }
