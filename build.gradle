@@ -20,6 +20,14 @@ configure([
         project(':cayenne'),
     ]) {
     
+    
+    jar {
+        archiveName = "${project.name}.jar"
+        from {
+            configurations.compile.collect { it.isDirectory() ? it : zipTree(it) }
+        }
+    }
+    
     apply plugin: 'application'
     
     

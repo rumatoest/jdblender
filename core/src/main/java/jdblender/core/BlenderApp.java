@@ -5,12 +5,7 @@ import jdblender.core.testers.ModelsTester;
 import jdblender.core.testers.SeriesTester;
 import jdblender.core.testers.SparesTester;
 
-import org.apache.commons.cli.CommandLine;
-import org.apache.commons.cli.CommandLineParser;
-import org.apache.commons.cli.DefaultParser;
-import org.apache.commons.cli.HelpFormatter;
-import org.apache.commons.cli.Options;
-import org.apache.commons.cli.ParseException;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
 
 import java.io.IOException;
@@ -47,6 +42,8 @@ public class BlenderApp {
 
     private int factor = 1;
 
+    private Path reportFile;
+
     private boolean noJit;
 
     Connection connection;
@@ -70,23 +67,10 @@ public class BlenderApp {
      * @param args Command line arguments
      */
     public void main(FrameworkRunner runner, String[] args) throws Exception {
-        noJit = "NONE".equals(System.getenv("JIT"));
-        factor = runner.getFactor();
-
-        LOG.info("JIT " + (noJit ? "(#_#) DISABLED" : "(^_^) ENABLED"));
-
-        Path reportFile = null;
-        if (args.length < 1) {
-            LOG.warning("CSV output not defined!!");
-        } else {
-            reportFile = Paths.get(args[0]);
-        }
-
-        if (args.length > 1) {
-            configureFromArgs(args[1].split(" "));
-        }
-
         this.runner = runner;
+
+        configure(args);
+
         try {
             connection = connect();
             dbInit();
@@ -116,35 +100,40 @@ public class BlenderApp {
         System.exit(0);
     }
 
-    public void configureFromArgs(String[] args) {
-        //System.out.println("ARGS: " + StringUtils.join(args, " "));
-        Options options = new Options();
-        options.addOption("f", true, "Test set factor (default 1) -> tests_count / factor ");
+    /**
+     * Arguments:
+     * - Path to output report file
+     * - Test data set reduce value (default - 1)
+     */
+    public void configure(String[] args) {
+        factor = runner.getFactor();
 
-        CommandLineParser parser = new DefaultParser();
-        try {
-            CommandLine parse = parser.parse(options, args);
+        noJit = "FALSE".equals(System.getenv("JDB_JIT"));
+        if (noJit) {
+            LOG.info("JIT (#_#) DISABLED");
+        }
+        
+        //"TRUE".equals(System.getenv("JDB_PROFILE"));
 
-            // FACTOR
-            if (parse.hasOption('f')) {
-                this.factor = NumberUtils.toInt(parse.getOptionValue('f'), getFactor());
-                if (factor > 100) {
-                    factor = 100;
-                }
-                if (factor < 1) {
-                    factor = 1;
-                }
-            }
-        } catch (ParseException ex) {
-            System.out.println("!!!");
-            System.out.println("ERROR occured: " + ex.getMessage());
-            System.out.println("!!!");
-            HelpFormatter formatter = new HelpFormatter();
-            formatter.printHelp("JDBSHAKER", options);
-            System.exit(1);
+        // Set up output CSV path
+        if (args.length > 0 && StringUtils.isNotBlank(args[0])) {
+            reportFile = Paths.get(args[0]);
+        } else {
+            LOG.warning("CSV output not defined!!");
         }
 
-        System.out.println("FACTOR of test set = " + getFactor());
+        // Set up reduce value
+        if (args.length > 1 && StringUtils.isNotBlank(args[1])) {
+            int r = NumberUtils.toInt(args[1], 1);
+            if (r > 1) {
+                factor = r;
+            }
+            LOG.info("TEST SET REDUCE FACTOR IS " + factor);
+        }
+
+        if (args.length > 2 && StringUtils.isNotBlank(args[2])) {
+            LOG.info("FLAGS: " + args[2]);
+        }
     }
 
     public int getFactor() {
